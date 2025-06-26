@@ -1,26 +1,7 @@
-const veiculos = {
-    'toco': { nome: 'Toco', pesoMaximo: 16, eixos: 2 },
-    'trucado': { nome: 'Caminhão Truck', pesoMaximo: 23, eixos: 3 },
-    'cavalo_toco_4e': { nome: 'Cavalo Mecânico Simples', pesoMaximo: 33, eixos: 4},
-    'cavalo_toco_ls': { nome: 'Cavalo Mecânico Simples + Semirreboque', pesoMaximo: 41.5, eixos: 5 },
-    'vanderleia': { nome: 'Vanderleia / Cavalo Trucado + Semirreboque', pesoMaximo: 48.5, eixos: 6 },
-    'romeu_julieta': { nome: 'Romeu e Julieta', pesoMaximo: 43, eixos: 7 },
-    'rodotrem': { nome: 'Rodotrem / Bi-trem', pesoMaximo: 74, eixos: 9 }
-};
-
+// --- Estruturas de Dados e Funções Auxiliares (sem alterações) ---
+const veiculos = { 'toco': { nome: 'Toco', pesoMaximo: 16, eixos: 2 }, 'trucado': { nome: 'Caminhão Truck', pesoMaximo: 23, eixos: 3 }, 'cavalo_toco_4e': { nome: 'Cavalo Mecânico Simples', pesoMaximo: 33, eixos: 4}, 'cavalo_toco_ls': { nome: 'Cavalo Mecânico Simples + Semirreboque', pesoMaximo: 41.5, eixos: 5 }, 'vanderleia': { nome: 'Vanderleia / Cavalo Trucado + Semirreboque', pesoMaximo: 48.5, eixos: 6 }, 'romeu_julieta': { nome: 'Romeu e Julieta', pesoMaximo: 43, eixos: 7 }, 'rodotrem': { nome: 'Rodotrem / Bi-trem', pesoMaximo: 74, eixos: 9 } };
 let tabelaAnttData = {};
-
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const response = await fetch('tabela-antt-2024.json');
-        tabelaAnttData = await response.json();
-        console.log("Tabela ANTT (Res. 6.046/2024) carregada com sucesso.");
-    } catch (error) {
-        console.error("Falha ao carregar a tabela ANTT 2024:", error);
-        alert("Não foi possível carregar a tabela de fretes. O cálculo de custo não funcionará.");
-    }
-});
-
+document.addEventListener('DOMContentLoaded', async () => { try { const response = await fetch('tabela-antt-2024.json'); tabelaAnttData = await response.json(); console.log("Tabela ANTT (Res. 6.046/2024) carregada com sucesso."); } catch (error) { console.error("Falha ao carregar a tabela ANTT 2024:", error); alert("Não foi possível carregar a tabela de fretes. O cálculo de custo não funcionará."); } });
 const map = L.map('map').setView([-14.235, -51.925], 4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }).addTo(map);
 const routeLayer = L.layerGroup().addTo(map);
@@ -29,38 +10,12 @@ async function fetchAddressFromCep(cep) { const url = `https://viacep.com.br/ws/
 async function geocodeAddress(address) { const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`; try { const response = await fetch(url); const data = await response.json(); if (data && data.length > 0) { return { lat: data[0].lat, lon: data[0].lon }; } else { throw new Error(`Endereço não encontrado para: "${address}"`); } } catch (error) { console.error('Erro de geocodificação:', error); throw error; } }
 function formatarDuracao(totalSegundos) { if (totalSegundos < 0) return "0s"; const dias = Math.floor(totalSegundos / 86400); const horas = Math.floor((totalSegundos % 86400) / 3600); const minutos = Math.floor((totalSegundos % 3600) / 60); let resultado = ""; if (dias > 0) resultado += `${dias}d `; if (horas > 0) resultado += `${horas}h `; if (minutos > 0) resultado += `${minutos}min`; return resultado.trim() || "0min"; }
 function calcularDuracaoRealista(tempoConducaoSegundos) { const MAX_CONDUCAO_CONTINUA = 5.5 * 3600; const DESCANSO_CURTO = 30 * 60; const MAX_JORNADA_DIARIA = 10 * 3600; const DESCANSO_DIARIO = 11 * 3600; let tempoConducaoRestante = tempoConducaoSegundos; let tempoTotalViagem = 0; let paradasCurtas = 0; let paradasLongas = 0; while (tempoConducaoRestante > 0) { let conducaoHoje = Math.min(tempoConducaoRestante, MAX_JORNADA_DIARIA); tempoTotalViagem += conducaoHoje; if (conducaoHoje > MAX_CONDUCAO_CONTINUA) { const numeroDeParadasCurtasHoje = Math.floor(conducaoHoje / MAX_CONDUCAO_CONTINUA); tempoTotalViagem += numeroDeParadasCurtasHoje * DESCANSO_CURTO; paradasCurtas += numeroDeParadasCurtasHoje; } tempoConducaoRestante -= conducaoHoje; if (tempoConducaoRestante > 0) { tempoTotalViagem += DESCANSO_DIARIO; paradasLongas++; } } return { duracaoTotalSegundos: tempoTotalViagem, tempoDirigindoSegundos: tempoConducaoSegundos, tempoParadoSegundos: tempoTotalViagem - tempoConducaoSegundos, paradas30min: paradasCurtas, paradas11h: paradasLongas }; }
+function calcularCustoFrete(distanciaKm, veiculo, tipoCarga, tipoOperacao) { const numEixos = veiculo.eixos; const tabelaSelecionada = tabelaAnttData[tipoOperacao]; if (!tabelaSelecionada) { throw new Error("Tipo de operação (Tabela) inválido."); } const coeficientes = tabelaSelecionada.cargas[tipoCarga]?.[numEixos]; if (!coeficientes || coeficientes.ccd === null) { throw new Error(`Combinação inválida: Não há valor na ${tabelaSelecionada.titulo} para o tipo de carga selecionado com um veículo de ${numEixos} eixos.`); } const custoDeslocamento = distanciaKm * coeficientes.ccd; const custoCargaDescarga = coeficientes.cc; const custoTotal = custoDeslocamento + custoCargaDescarga; return { custoTotal: custoTotal, tituloTabela: tabelaSelecionada.titulo }; }
 
-function calcularCustoFrete(distanciaKm, veiculo, tipoCarga, tipoOperacao) {
-    const numEixos = veiculo.eixos;
-    
-    // Busca a tabela correta (A, B, C ou D)
-    const tabelaSelecionada = tabelaAnttData[tipoOperacao];
-    if (!tabelaSelecionada) {
-        throw new Error("Tipo de operação (Tabela) inválido.");
-    }
 
-    // Busca os coeficientes para a carga e o número de eixos
-    // O '?.' (optional chaining) ajuda a evitar erros se 'cargas' ou 'tipoCarga' não existirem
-    const coeficientes = tabelaSelecionada.cargas[tipoCarga]?.[numEixos];
-    
-    // ESTA É A LINHA DE VALIDAÇÃO MAIS IMPORTANTE
-    // Ela verifica se a busca encontrou algo E se o valor de CCD não é nulo.
-    if (!coeficientes || coeficientes.ccd === null) {
-        throw new Error(`Combinação inválida: Não há valor na ${tabelaSelecionada.titulo} para o tipo de carga selecionado com um veículo de ${numEixos} eixos.`);
-    }
-    
-    // Se a validação acima passar, o código continua para o cálculo
-    const custoDeslocamento = distanciaKm * coeficientes.ccd;
-    const custoCargaDescarga = coeficientes.cc;
-    const custoTotal = custoDeslocamento + custoCargaDescarga;
-    
-    return {
-        custoTotal: custoTotal,
-        tituloTabela: tabelaSelecionada.titulo
-    };
-}
-
+// --- Função Principal Atualizada com Lógica de Múltiplas Viagens ---
 async function calculateAndDisplayRoute() {
+    // 1. Obter e validar inputs (sem alterações na obtenção)
     const origemInput = document.getElementById('origem').value;
     const destinoInput = document.getElementById('destino').value;
     const tipoOperacao = document.getElementById('tipo-operacao').value;
@@ -72,18 +27,28 @@ async function calculateAndDisplayRoute() {
         alert('Por favor, preencha todos os campos: origem, destino e peso da carga.');
         return;
     }
-
     const pesoCarga = parseFloat(pesoCargaInput);
     if (isNaN(pesoCarga) || pesoCarga <= 0) {
         alert('Por favor, insira um peso de carga válido.');
         return;
     }
-
     const veiculoSelecionado = veiculos[veiculoId];
+
+    // --- NOVA LÓGICA: CALCULAR NÚMERO DE VIAGENS ---
+    let numeroDeViagens = 1;
+    let avisoMultiViagem = '';
+
+    // Verifica se o peso da carga excede a capacidade do veículo
     if (pesoCarga > veiculoSelecionado.pesoMaximo) {
-        alert(`ERRO: O peso da carga (${pesoCarga}t) excede a capacidade máxima do ${veiculoSelecionado.nome} (${veiculoSelecionado.pesoMaximo}t).`);
-        return;
+        // Calcula quantas viagens são necessárias, arredondando para cima
+        numeroDeViagens = Math.ceil(pesoCarga / veiculoSelecionado.pesoMaximo);
+        avisoMultiViagem = `
+            <div class="resultado-bloco aviso">
+                <strong>Atenção:</strong> A carga de ${pesoCarga}t excede a capacidade do veículo (${veiculoSelecionado.pesoMaximo}t).<br>
+                Serão necessárias <strong>${numeroDeViagens} viagens</strong> para completar a operação.
+            </div>`;
     }
+    // --- FIM DA NOVA LÓGICA ---
 
     document.getElementById('resultados').innerHTML = 'Processando e calculando...';
 
@@ -103,21 +68,35 @@ async function calculateAndDisplayRoute() {
         const distanciaKm = (routeData.routes[0].distance / 1000);
         const tempoConducaoOriginalSegundos = routeData.routes[0].duration;
 
-        const freteInfo = calcularCustoFrete(distanciaKm, veiculoSelecionado, tipoCarga, tipoOperacao);
-        const duracaoRealista = calcularDuracaoRealista(tempoConducaoOriginalSegundos);
+        // Calcula o custo e a duração para UMA ÚNICA VIAGEM
+        const freteInfoPorViagem = calcularCustoFrete(distanciaKm, veiculoSelecionado, tipoCarga, tipoOperacao);
+        const duracaoRealistaPorViagem = calcularDuracaoRealista(tempoConducaoOriginalSegundos);
+
+        // --- NOVA LÓGICA: CALCULAR TOTAIS DA OPERAÇÃO ---
+        const custoTotalOperacao = freteInfoPorViagem.custoTotal * numeroDeViagens;
+        const duracaoTotalOperacaoSegundos = duracaoRealistaPorViagem.duracaoTotalSegundos * numeroDeViagens;
+        // --- FIM DA NOVA LÓGICA ---
+
 
         routeLayer.clearLayers();
+
+        // --- ATUALIZADO: Exibição dos resultados para refletir as múltiplas viagens ---
         document.getElementById('resultados').innerHTML = `
+            ${avisoMultiViagem}
             <div class="resultado-bloco">
-                <strong>Distância:</strong> ${distanciaKm.toFixed(2)} km | <strong>Veículo:</strong> ${veiculoSelecionado.nome} (${veiculoSelecionado.eixos} eixos)
+                <strong>Distância (por viagem):</strong> ${distanciaKm.toFixed(2)} km | <strong>Veículo:</strong> ${veiculoSelecionado.nome} (${veiculoSelecionado.eixos} eixos)
             </div>
             <div class="resultado-bloco">
-                <strong style="font-size: 1.2em; color: #007bff;">Custo Mínimo (ANTT): R$ ${freteInfo.custoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong><br>
-                <span style="font-size: 0.9em; color: #555;">Cálculo baseado na: ${freteInfo.tituloTabela}</span>
+                <strong style="font-size: 1.2em; color: #007bff;">Custo Total da Operação: R$ ${custoTotalOperacao.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong><br>
+                <span style="font-size: 0.9em; color: #555;">
+                    Baseado em ${numeroDeViagens} viagem(ns) de R$ ${freteInfoPorViagem.custoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} cada (Tabela ${freteInfoPorViagem.tituloTabela.split(' ')[0]})
+                </span>
             </div>
             <div class="resultado-bloco">
-                <strong>Tempo Total de Viagem (com descansos): <span style="font-size: 1.1em;">${formatarDuracao(duracaoRealista.duracaoTotalSegundos)}</span></strong><br>
-                <span>(Tempo em condução: ${formatarDuracao(duracaoRealista.tempoDirigindoSegundos)} | Tempo em paradas: ${formatarDuracao(duracaoRealista.tempoParadoSegundos)})</span>
+                <strong>Duração Total da Operação: <span style="font-size: 1.1em;">${formatarDuracao(duracaoTotalOperacaoSegundos)}</span></strong><br>
+                <span style="font-size: 0.9em; color: #555;">
+                    Considerando ${numeroDeViagens} viagem(ns) de ${formatarDuracao(duracaoRealistaPorViagem.duracaoTotalSegundos)} cada (com descansos)
+                </span>
             </div>
         `;
 

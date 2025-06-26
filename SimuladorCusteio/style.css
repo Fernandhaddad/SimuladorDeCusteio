@@ -80,6 +80,17 @@ button:hover {
     padding: 8px;
     border-bottom: 1px solid #ddd;
 }
+
 .resultado-bloco:last-child {
     border-bottom: none;
+}
+
+.aviso {
+    background-color: #fff3cd; /* Amarelo claro */
+    color: #856404;
+    border-color: #ffeeba;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    border: 1px solid;
 }
