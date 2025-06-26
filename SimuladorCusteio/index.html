@@ -3,27 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rota com Google Maps e Leaflet</title>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
-
+    <title>Calculadora de Frete ANTT</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>Calcular Rota Rodoviária</h1>
+        <h1>Calculadora de Frete Mínimo (ANTT)</h1>
+        
         <div class="form-group">
-            <label for="origem">Endereço de Saída:</label>
-            <input type="text" id="origem" placeholder="Ex: Av. Paulista, 1578, São Paulo, SP" value="Avenida Dante Michelini, Vitória, ES">
+            <label for="origem">Endereço de Saída (ou CEP):</label>
+            <input type="text" id="origem" placeholder="Ex: Av. Paulista, 1578 ou 01310-200">
         </div>
         <div class="form-group">
-            <label for="destino">Endereço de Chegada:</label>
-            <input type="text" id="destino" placeholder="Ex: Praia de Copacabana, Rio de Janeiro, RJ" value="Cristo Redentor, Rio de Janeiro, RJ">
+            <label for="destino">Endereço de Chegada (ou CEP):</label>
+            <input type="text" id="destino" placeholder="Ex: Praia de Copacabana ou 22070-001">
         </div>
-        <button id="calcular-rota">Calcular Rota</button>
+
+        <hr>
+
+        <div class="form-group">
+            <label for="tipo-carga">Selecione o Tipo de Carga:</label>
+            <select id="tipo-carga">
+                <option value="carga_geral">Carga Geral</option>
+                <option value="granel">Granel</option>
+                <option value="frigorificada">Frigorificada</option>
+                <option value="perigosa">Perigosa</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="veiculo">Selecione o Tipo de Veículo:</label>
+            <select id="veiculo">
+                <option value="toco">Toco (2 eixos)</option>
+                <option value="trucado">Caminhão Truck (3 eixos)</option>
+                <option value="cavalo_toco_ls">Cavalo Toco + Carreta LS (5 eixos)</option>
+                <option value="cavalo_trucado_ls">Cavalo Trucado + Carreta LS (6 eixos)</option>
+                <option value="romeu_julieta">Romeu e Julieta (7 eixos)</option>
+                <option value="vanderleia">Vanderleia (6 eixos)</option>
+                <option value="rodotrem">Rodotrem / Bi-trem (9 eixos)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="peso-carga">Peso da Carga (em toneladas):</label>
+            <input type="number" id="peso-carga" placeholder="Ex: 15.5">
+        </div>
+        
+        <button id="calcular-rota">Calcular Frete Mínimo</button>
 
         <div id="resultados">
             </div>
@@ -31,12 +58,7 @@
     
     <div id="map"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
-     
-    <script src="https://maps.googleapis.com/maps/api/js?key=SUA_CHAVE_API_AQUI&callback=initMap" async defer></script>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 
 </body>
