@@ -1,0 +1,10 @@
+{
+  "info": "Preços médios de referência para Diesel S-10 por estado (R$/litro), baseados em polos de distribuição da Petrobras em 26/06/2025.",
+  "AC": 6.15, "AL": 6.10, "AP": 6.20, "AM": 6.18,
+  "BA": 6.05, "CE": 6.08, "DF": 5.98, "ES": 5.88,
+  "GO": 5.96, "MA": 6.12, "MT": 6.02, "MS": 5.99,
+  "MG": 5.92, "PA": 6.15, "PB": 6.05, "PR": 5.85,
+  "PE": 6.03, "PI": 6.09, "RJ": 5.95, "RN": 6.06,
+  "RS": 5.90, "RO": 6.14, "RR": 6.25, "SC": 5.87,
+  "SP": 5.90, "SE": 6.07, "TO": 6.00
+}

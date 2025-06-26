@@ -13,7 +13,7 @@ body {
     overflow: hidden; /* Impede a rolagem do corpo da página */
 }
 
-/* --- NOVO LAYOUT DE DUAS COLUNAS (FLEXBOX) --- */
+/* --- LAYOUT DE DUAS COLUNAS (FLEXBOX) --- */
 .main-wrapper {
     display: flex;
     flex-direction: row;
@@ -32,21 +32,20 @@ body {
 
 .right-panel {
     flex: 1; /* Ocupa o restante do espaço disponível */
-    display: flex;
+    display: flex; /* Essencial para que o filho (#map) possa usar height: 100% */
 }
 
 #map {
     width: 100%;
-    height: 100%;
+    height: 100%; /* Ocupa 100% da altura do .right-panel */
 }
-/* --- FIM DAS REGRAS DE LAYOUT --- */
 
 
 /* --- ESTILOS DOS COMPONENTES (FORMULÁRIO, RESULTADOS, ETC) --- */
 .container {
     width: 100%;
     padding: 0;
-    box-shadow: none; /* Sombra removida, pois o painel já tem separação */
+    box-shadow: none;
 }
 
 h1 {
@@ -127,25 +126,24 @@ button:hover {
 
 
 /* --- DESIGN RESPONSIVO PARA CELULARES --- */
-/* Em telas com largura de até 800px, o layout volta a ser de uma coluna só */
 @media (max-width: 800px) {
     body {
         height: auto;
-        overflow: auto; /* Permite a rolagem normal em telas pequenas */
+        overflow: auto;
     }
 
     .main-wrapper {
-        flex-direction: column; /* Empilha os painéis verticalmente */
+        flex-direction: column;
     }
 
     .left-panel {
-        flex: 1; /* Remove a largura fixa */
+        flex: 1;
         height: auto;
         border-right: none;
     }
     
     .right-panel {
         flex: 1;
-        height: 60vh; /* Define uma altura fixa para o mapa no celular */
+        height: 60vh;
     }
 }

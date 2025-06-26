@@ -1,0 +1,19 @@
+{
+  "precos": {
+    "arla32_litro": 2.50
+  },
+  "consumo_arla_percentual_sobre_diesel": 0.05,
+  "consumo_diesel_kml": {
+    "frigorificada": {
+      "2": 3.2, "3": 2.4, "4": 2.1, "5": 1.8, "6": 1.6, "7": 1.6, "9": 1.4
+    },
+    "outros": {
+      "2": 4.0, "3": 3.0, "4": 2.7, "5": 2.3, "6": 2.0, "7": 2.0, "9": 1.7
+    },
+    "excecoes": {
+      "neogranel": {
+        "2": 5.0
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+    "toco": {
+        "nome": "Toco",
+        "pesoMaximo": 16,
+        "eixos": 2,
+        "valor": 350000,
+        "vidaUtilAnos": 10,
+        "custoManutencaoMensal": 2000
+    },
+    "trucado": {
+        "nome": "Caminhão Truck",
+        "pesoMaximo": 23,
+        "eixos": 3,
+        "valor": 450000,
+        "vidaUtilAnos": 10,
+        "custoManutencaoMensal": 2500
+    },
+    "cavalo_toco_4e": {
+        "nome": "Cavalo Mecânico Simples",
+        "pesoMaximo": 33,
+        "eixos": 4,
+        "valor": 550000,
+        "vidaUtilAnos": 12,
+        "custoManutencaoMensal": 3000
+    },
+    "cavalo_toco_ls": {
+        "nome": "Cavalo Mecânico Simples + Semirreboque",
+        "pesoMaximo": 41.5,
+        "eixos": 5,
+        "valor": 750000,
+        "vidaUtilAnos": 12,
+        "custoManutencaoMensal": 4000
+    },
+    "vanderleia": {
+        "nome": "Vanderleia / Cavalo Trucado + Semirreboque",
+        "pesoMaximo": 48.5,
+        "eixos": 6,
+        "valor": 850000,
+        "vidaUtilAnos": 12,
+        "custoManutencaoMensal": 4500
+    },
+    "romeu_julieta": {
+        "nome": "Romeu e Julieta",
+        "pesoMaximo": 43,
+        "eixos": 7,
+        "valor": 900000,
+        "vidaUtilAnos": 15,
+        "custoManutencaoMensal": 5000
+    },
+    "rodotrem": {
+        "nome": "Rodotrem / Bi-trem",
+        "pesoMaximo": 74,
+        "eixos": 9,
+        "valor": 1100000,
+        "vidaUtilAnos": 15,
+        "custoManutencaoMensal": 6000
+    }
+}
