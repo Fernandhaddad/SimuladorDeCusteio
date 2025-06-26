@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Frete ANTT</title>
+    <title>Calculadora de Frete ANTT (Dados Atualizados)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="container">
         <h1>Calculadora de Frete Mínimo (ANTT)</h1>
         
@@ -24,24 +23,42 @@
         <hr>
 
         <div class="form-group">
-            <label for="tipo-carga">Selecione o Tipo de Carga:</label>
-            <select id="tipo-carga">
-                <option value="carga_geral">Carga Geral</option>
-                <option value="granel">Granel</option>
-                <option value="frigorificada">Frigorificada</option>
-                <option value="perigosa">Perigosa</option>
+            <label for="tipo-operacao">Tipo de Operação (Tabela ANTT):</label>
+            <select id="tipo-operacao">
+                <option value="tabela_a">A - Carga Lotação</option>
+                <option value="tabela_b">B - Apenas Veículo</option>
+                <option value="tabela_c">C - Lotação Alto Desempenho</option>
+                <option value="tabela_d">D - Apenas Veículo Alto Desempenho</option>
             </select>
         </div>
-
         <div class="form-group">
-            <label for="veiculo">Selecione o Tipo de Veículo:</label>
+            <label for="tipo-carga">Tipo de Carga:</label>
+            <select id="tipo-carga">
+                <option value="carga_geral">Carga Geral</option>
+                <option value="granel_solido">Granel Sólido</option>
+                <option value="granel_liquido">Granel Líquido</option>
+                <option value="frigorificada">Frigorificada ou Aquecida</option>
+                <option value="conteinerizada">Conteinerizada</option>
+                <option value="neogranel">Neogranel</option>
+                <option value="perigosa_granel_solido">Perigosa (Granel Sólido)</option>
+                <option value="perigosa_granel_liquido">Perigosa (Granel Líquido)</option>
+                <option value="perigosa_frigorificada">Perigosa (Frigorificada ou Aquecida)</option>
+                <option value="perigosa_conteinerizada">Perigosa (Conteinerizada)</option>
+                <option value="perigosa_carga_geral">Perigosa (Carga Geral)</option>
+                <option value="granel_pressurizada">Carga Granel Pressurizada</option>
+                <option value="container">Container (Alto Desempenho)</option>
+                <option value="siderurgica">Produtos Siderúrgicos (Alto Desempenho)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="veiculo">Tipo de Veículo:</label>
             <select id="veiculo">
                 <option value="toco">Toco (2 eixos)</option>
                 <option value="trucado">Caminhão Truck (3 eixos)</option>
-                <option value="cavalo_toco_ls">Cavalo Toco + Carreta LS (5 eixos)</option>
-                <option value="cavalo_trucado_ls">Cavalo Trucado + Carreta LS (6 eixos)</option>
+                <option value="cavalo_toco_4e">Cavalo Mecânico Simples (4 eixos)</option>
+                <option value="cavalo_toco_ls">Cavalo Mecânico Simples + Semirreboque (5 eixos)</option>
+                <option value="vanderleia">Vanderleia / Cavalo Trucado + Semirreboque (6 eixos)</option>
                 <option value="romeu_julieta">Romeu e Julieta (7 eixos)</option>
-                <option value="vanderleia">Vanderleia (6 eixos)</option>
                 <option value="rodotrem">Rodotrem / Bi-trem (9 eixos)</option>
             </select>
         </div>
@@ -51,15 +68,11 @@
         </div>
         
         <button id="calcular-rota">Calcular Frete Mínimo</button>
-
-        <div id="resultados">
-            </div>
+        <div id="resultados"></div>
     </div>
     
     <div id="map"></div>
-
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
-
 </body>
 </html>
