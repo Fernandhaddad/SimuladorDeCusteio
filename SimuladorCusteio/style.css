@@ -1,27 +1,64 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* --- ESTILOS GERAIS --- */
+* {
+    box-sizing: border-box;
 }
 
-.container {
-    width: 90%;
-    max-width: 800px;
-    background: #fff;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    color: #333;
+    height: 100vh; /* Ocupa a altura total da tela */
+    overflow: hidden; /* Impede a rolagem do corpo da página */
+}
+
+/* --- NOVO LAYOUT DE DUAS COLUNAS (FLEXBOX) --- */
+.main-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+.left-panel {
+    flex: 0 0 480px; /* Não cresce, não encolhe, base de 480px de largura */
+    background: #ffffff;
     padding: 20px;
-    margin-top: 20px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    border-radius: 8px;
+    overflow-y: auto; /* Adiciona barra de rolagem APENAS se o conteúdo for grande */
+    height: 100vh;
+    border-right: 1px solid #ddd;
+}
+
+.right-panel {
+    flex: 1; /* Ocupa o restante do espaço disponível */
+    display: flex;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+/* --- FIM DAS REGRAS DE LAYOUT --- */
+
+
+/* --- ESTILOS DOS COMPONENTES (FORMULÁRIO, RESULTADOS, ETC) --- */
+.container {
+    width: 100%;
+    padding: 0;
+    box-shadow: none; /* Sombra removida, pois o painel já tem separação */
 }
 
 h1 {
     text-align: center;
     color: #0056b3;
+    margin-top: 0;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
 }
 
 .form-group {
@@ -31,13 +68,17 @@ h1 {
 label {
     display: block;
     margin-bottom: 5px;
+    font-weight: 600;
 }
 
-input[type="text"] {
-    width: calc(100% - 20px);
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-size: 1rem;
 }
 
 button {
@@ -51,6 +92,7 @@ button {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-top: 20px;
 }
 
 button:hover {
@@ -59,38 +101,51 @@ button:hover {
 
 #resultados {
     margin-top: 20px;
-    padding: 10px;
-    background-color: #e9f5ff;
-    border-left: 5px solid #007bff;
-    text-align: center;
-    font-size: 1.1em;
-}
-
-/* IMPORTANTE: Define a altura do mapa */
-#map {
-    width: 90%;
-    max-width: 800px;
-    height: 500px; /* Você pode ajustar este valor */
-    margin-top: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    font-size: 1em;
 }
 
 .resultado-bloco {
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+    line-height: 1.5;
 }
-
 .resultado-bloco:last-child {
     border-bottom: none;
 }
 
 .aviso {
-    background-color: #fff3cd; /* Amarelo claro */
+    background-color: #fff3cd;
     color: #856404;
     border-color: #ffeeba;
-    padding: 10px;
+    padding: 12px;
     border-radius: 4px;
-    margin-bottom: 10px;
     border: 1px solid;
+}
+
+
+/* --- DESIGN RESPONSIVO PARA CELULARES --- */
+/* Em telas com largura de até 800px, o layout volta a ser de uma coluna só */
+@media (max-width: 800px) {
+    body {
+        height: auto;
+        overflow: auto; /* Permite a rolagem normal em telas pequenas */
+    }
+
+    .main-wrapper {
+        flex-direction: column; /* Empilha os painéis verticalmente */
+    }
+
+    .left-panel {
+        flex: 1; /* Remove a largura fixa */
+        height: auto;
+        border-right: none;
+    }
+    
+    .right-panel {
+        flex: 1;
+        height: 60vh; /* Define uma altura fixa para o mapa no celular */
+    }
 }

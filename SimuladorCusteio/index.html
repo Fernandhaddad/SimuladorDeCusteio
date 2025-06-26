@@ -3,75 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Frete ANTT (Dados Atualizados)</title>
+    <title>Calculadora de Frete ANTT (Layout Dividido)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Calculadora de Frete Mínimo (ANTT)</h1>
-        
-        <div class="form-group">
-            <label for="origem">Endereço de Saída (ou CEP):</label>
-            <input type="text" id="origem" placeholder="Ex: Av. Paulista, 1578 ou 01310-200">
-        </div>
-        <div class="form-group">
-            <label for="destino">Endereço de Chegada (ou CEP):</label>
-            <input type="text" id="destino" placeholder="Ex: Praia de Copacabana ou 22070-001">
+
+    <div class="main-wrapper">
+
+        <div class="left-panel">
+            <div class="container">
+                <h1>Calculadora de Frete</h1>
+                
+                <div class="form-group">
+                    <label for="origem">Endereço de Saída (ou CEP):</label>
+                    <input type="text" id="origem" placeholder="Ex: Av. Paulista, 1578">
+                </div>
+                <div class="form-group">
+                    <label for="destino">Endereço de Chegada (ou CEP):</label>
+                    <input type="text" id="destino" placeholder="Ex: Praia de Copacabana">
+                </div>
+
+                <hr>
+
+                <div class="form-group">
+                    <label for="tipo-operacao">Tipo de Operação (Tabela ANTT):</label>
+                    <select id="tipo-operacao">
+                        <option value="tabela_a">A - Carga Lotação</option>
+                        <option value="tabela_b">B - Apenas Veículo</option>
+                        <option value="tabela_c">C - Lotação Alto Desempenho</option>
+                        <option value="tabela_d">D - Apenas Veículo Alto Desempenho</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tipo-carga">Tipo de Carga:</label>
+                    <select id="tipo-carga">
+                        <option value="carga_geral">Carga Geral</option>
+                        <option value="granel_solido">Granel Sólido</option>
+                        <option value="granel_liquido">Granel Líquido</option>
+                        <option value="frigorificada">Frigorificada ou Aquecida</option>
+                        <option value="conteinerizada">Conteinerizada</option>
+                        <option value="neogranel">Neogranel</option>
+                        <option value="perigosa_granel_solido">Perigosa (Granel Sólido)</option>
+                        <option value="perigosa_granel_liquido">Perigosa (Granel Líquido)</option>
+                        <option value="perigosa_frigorificada">Perigosa (Frigorificada ou Aquecida)</option>
+                        <option value="perigosa_conteinerizada">Perigosa (Conteinerizada)</option>
+                        <option value="perigosa_carga_geral">Perigosa (Carga Geral)</option>
+                        <option value="granel_pressurizada">Carga Granel Pressurizada</option>
+                        <option value="container">Container (Alto Desempenho)</option>
+                        <option value="siderurgica">Produtos Siderúrgicos (Alto Desempenho)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="veiculo">Tipo de Veículo:</label>
+                    <select id="veiculo">
+                        <option value="toco">Toco (2 eixos)</option>
+                        <option value="trucado">Caminhão Truck (3 eixos)</option>
+                        <option value="cavalo_toco_4e">Cavalo Mecânico Simples (4 eixos)</option>
+                        <option value="cavalo_toco_ls">Cavalo Mecânico Simples + Semirreboque (5 eixos)</option>
+                        <option value="vanderleia">Vanderleia / Cavalo Trucado + Semirreboque (6 eixos)</option>
+                        <option value="romeu_julieta">Romeu e Julieta (7 eixos)</option>
+                        <option value="rodotrem">Rodotrem / Bi-trem (9 eixos)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="peso-carga">Peso da Carga (em toneladas):</label>
+                    <input type="number" id="peso-carga" placeholder="Ex: 15.5">
+                </div>
+                
+                <button id="calcular-rota">Calcular Frete Mínimo</button>
+                <div id="resultados"></div>
+            </div>
         </div>
 
-        <hr>
+        <div class="right-panel">
+            <div id="map"></div>
+        </div>
 
-        <div class="form-group">
-            <label for="tipo-operacao">Tipo de Operação (Tabela ANTT):</label>
-            <select id="tipo-operacao">
-                <option value="tabela_a">A - Carga Lotação</option>
-                <option value="tabela_b">B - Apenas Veículo</option>
-                <option value="tabela_c">C - Lotação Alto Desempenho</option>
-                <option value="tabela_d">D - Apenas Veículo Alto Desempenho</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="tipo-carga">Tipo de Carga:</label>
-            <select id="tipo-carga">
-                <option value="carga_geral">Carga Geral</option>
-                <option value="granel_solido">Granel Sólido</option>
-                <option value="granel_liquido">Granel Líquido</option>
-                <option value="frigorificada">Frigorificada ou Aquecida</option>
-                <option value="conteinerizada">Conteinerizada</option>
-                <option value="neogranel">Neogranel</option>
-                <option value="perigosa_granel_solido">Perigosa (Granel Sólido)</option>
-                <option value="perigosa_granel_liquido">Perigosa (Granel Líquido)</option>
-                <option value="perigosa_frigorificada">Perigosa (Frigorificada ou Aquecida)</option>
-                <option value="perigosa_conteinerizada">Perigosa (Conteinerizada)</option>
-                <option value="perigosa_carga_geral">Perigosa (Carga Geral)</option>
-                <option value="granel_pressurizada">Carga Granel Pressurizada</option>
-                <option value="container">Container (Alto Desempenho)</option>
-                <option value="siderurgica">Produtos Siderúrgicos (Alto Desempenho)</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="veiculo">Tipo de Veículo:</label>
-            <select id="veiculo">
-                <option value="toco">Toco (2 eixos)</option>
-                <option value="trucado">Caminhão Truck (3 eixos)</option>
-                <option value="cavalo_toco_4e">Cavalo Mecânico Simples (4 eixos)</option>
-                <option value="cavalo_toco_ls">Cavalo Mecânico Simples + Semirreboque (5 eixos)</option>
-                <option value="vanderleia">Vanderleia / Cavalo Trucado + Semirreboque (6 eixos)</option>
-                <option value="romeu_julieta">Romeu e Julieta (7 eixos)</option>
-                <option value="rodotrem">Rodotrem / Bi-trem (9 eixos)</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="peso-carga">Peso da Carga (em toneladas):</label>
-            <input type="number" id="peso-carga" placeholder="Ex: 15.5">
-        </div>
-        
-        <button id="calcular-rota">Calcular Frete Mínimo</button>
-        <div id="resultados"></div>
     </div>
     
-    <div id="map"></div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
