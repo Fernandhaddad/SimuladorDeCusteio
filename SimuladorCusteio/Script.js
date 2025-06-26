@@ -135,6 +135,7 @@ async function calculateAndDisplayRoute() {
             .bindPopup(`<b>Chegada:</b><br>${destinoAddress}`);
 
         map.fitBounds(routeLine.getBounds());
+        
 
     } catch (error) {
         alert('Falha ao processar: ' + error.message);
