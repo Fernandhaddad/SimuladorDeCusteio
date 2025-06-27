@@ -1,0 +1,23 @@
+{
+  "info": "Custos e parâmetros para cálculo de desgaste de pneus.",
+  "preco_pneu_novo": {
+    "direcional": {
+      "2": 1627.11, "3": 1702.00, "4": 1702.00, "5": 1702.00, "6": 1702.00, "7": 1702.00, "9": 1702.00
+    },
+    "traseiro": {
+      "2": 1816.40, "3": 1900.00, "4": 1900.00, "5": 1900.00, "6": 1900.00, "7": 1900.00, "9": 1900.00
+    }
+  },
+  "recauchutagem": {
+    "preco": 590.00,
+    "numero_por_pneu_traseiro": 1
+  },
+  "vida_util_km": {
+    "direcional_sem_recauchutagem": 100000,
+    "traseiro_com_recauchutagem": 130000
+  },
+  "numero_pneus": {
+    "direcionais": 2,
+    "traseiros_por_eixo": 4
+  }
+}

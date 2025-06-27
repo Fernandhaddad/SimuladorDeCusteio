@@ -1,0 +1,11 @@
+{
+  "info": "Valores de referência para Licenciamento Anual por estado.",
+  "licenciamento_anual": {
+    "AC": 200.25, "AL": 36.03,  "AP": 128.54, "AM": 122.88,
+    "BA": 173.50, "DF": 102.00, "GO": 251.25, "MT": 140.00,
+    "MS": 235.28, "MG": 35.18,  "PA": 288.08, "PB": 206.55,
+    "PR": 90.94,  "PI": 129.60, "RJ": 281.29, "RS": 109.27,
+    "RO": 220.41, "RR": 205.25, "SC": 149.37, "SP": 167.74,
+    "SE": 207.36, "TO": 79.63
+  }
+}
