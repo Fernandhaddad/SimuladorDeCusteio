@@ -201,3 +201,70 @@ button:hover {
     color: #0056b3; /* Cor mais forte para o link ativo */
     border-bottom-color: #0056b3; /* Borda inferior permanente para a página ativa */
 }
+
+/* ROTEIRIZADOR */
+.parada-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.parada-group input {
+    flex-grow: 1;
+}
+.remover-parada {
+    background-color: #ab4034;
+    color: white;
+    border: none;
+    border-radius: 30%;
+    width: 24px;
+    height: 24px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0; /* Adiciona esta linha */
+    position: relative;
+    top: -9px;
+}
+.botao-secundario {
+    background-color: #6c757d;
+    margin-top: 0;
+}
+.botao-secundario:hover {
+    background-color: #5a6268;
+}
+.form-group-inline {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-group-inline input[type="checkbox"] {
+    margin-right: 10px;
+    width: auto; /* Reseta a largura de 100% dos outros inputs */
+}
+
+.form-group-inline label {
+    margin-bottom: 0; /* Remove a margem padrão do label */
+    font-weight: 500;
+}
+
+/* número em cima do marcador no roteirizador */
+.marker-label {
+    /* Usamos RGBA para o fundo com 70% de opacidade (30% de transparência) */
+    background-color: rgba(0, 61, 122, 0.7); 
+
+    /* Cor do texto alterada para BRANCO para ser legível */
+    color: white; 
+
+    /* Melhorias visuais: padding e bordas arredondadas */
+    padding: 2px 6px;
+    border-radius: 4px;
+    
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    box-shadow: none;
+}

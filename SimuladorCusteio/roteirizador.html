@@ -24,17 +24,27 @@
                 <h1>Roteirizador</h1>
                 
                 <div class="form-group">
-                    <label for="ponto-saida">Endereço de Saída (ou CEP):</label>
+                    <label for="ponto-saida">Endereço de Saída:</label>
                     <input type="text" id="ponto-saida" placeholder="Ex: Av. Paulista, 1578, São Paulo">
-                </div>
-                <div class="form-group">
-                    <label for="ponto-chegada">Endereço de Chegada (ou CEP):</label>
-                    <input type="text" id="ponto-chegada" placeholder="Ex: Praia de Copacabana, Rio de Janeiro">
                 </div>
 
                 <hr>
+                <label>Pontos de Entrega (em ordem):</label>
+                <div id="pontos-de-parada-container">
+                    <div class="parada-group">
+                        <input type="text" class="ponto-parada" placeholder="Endereço da Parada 1">
+                        <button class="remover-parada" style="display: none;">X</button> </div>
+                </div>
 
-                <button id="criar-rota">Criar Rota</button>
+                <button id="adicionar-parada" type="button" class="botao-secundario">Adicionar Ponto de Entrega</button>
+                <hr>
+
+                <div class="form-group-inline">
+                    <input type="checkbox" id="retornar-origem">
+                    <label for="retornar-origem">Retornar ao ponto de origem</label>
+                </div>
+                
+                <button id="criar-rota" type="button">Criar Rota</button>
                 
                 <div id="info-rota"></div>
             </div>
