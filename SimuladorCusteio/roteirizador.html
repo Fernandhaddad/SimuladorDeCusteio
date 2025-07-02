@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteirizador - Meu Site</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="main-wrapper">
+
+        <div class="left-panel">
+
+            <nav class="menu-navegacao">
+                <ul>
+                    <li><a href="index.html">Calculadora</a></li>
+                    <li><a href="roteirizador.html" class="ativo">Roteirizador</a></li>
+                    <li><a href="sobre.html">Sobre</a></li>
+                </ul>
+            </nav>
+            <div class="container">
+                <h1>Roteirizador</h1>
+                
+                <div class="form-group">
+                    <label for="ponto-saida">Endereço de Saída (ou CEP):</label>
+                    <input type="text" id="ponto-saida" placeholder="Ex: Av. Paulista, 1578, São Paulo">
+                </div>
+                <div class="form-group">
+                    <label for="ponto-chegada">Endereço de Chegada (ou CEP):</label>
+                    <input type="text" id="ponto-chegada" placeholder="Ex: Praia de Copacabana, Rio de Janeiro">
+                </div>
+
+                <hr>
+
+                <button id="criar-rota">Criar Rota</button>
+                
+                <div id="info-rota"></div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div id="map"></div>
+        </div>
+
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="roteirizador.js"></script> </body>
+</html>
