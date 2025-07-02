@@ -7,10 +7,11 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f2f5;
+    background-color: #f8f9fa;
     color: #333;
-    height: 100vh; /* Ocupa a altura total da tela */
-    overflow: hidden; /* Impede a rolagem do corpo da página */
+    height: 100vh; /* Esta linha pode continuar */
+    display: flex; /* NOVO */
+    flex-direction: column; /* NOVO */
 }
 
 /* --- LAYOUT DE DUAS COLUNAS (FLEXBOX) --- */
@@ -18,7 +19,8 @@ body {
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: 100%;
+    flex-grow: 1; /* NOVO - Faz o container crescer */
+    min-height: 0; /* NOVO - Previne bugs de overflow do flexbox */
 }
 
 .left-panel {
@@ -26,7 +28,6 @@ body {
     background: #ffffff;
     padding: 20px;
     overflow-y: auto; /* Adiciona barra de rolagem APENAS se o conteúdo for grande */
-    height: 100vh;
     border-right: 1px solid #ddd;
 }
 
@@ -146,4 +147,57 @@ button:hover {
         flex: 1;
         height: 60vh;
     }
+}
+/* ===================================== */
+/* NOVO MENU - DESIGN ELEGANTE E FINO  */
+/* ===================================== */
+
+/* A BARRA DE NAVEGAÇÃO */
+.menu-navegacao {
+    background-color: #ffffff; /* FUNDO BRANCO PARA INTEGRAR COM O PAINEL */
+    padding: 0 30px;           /* Espaçamento nas laterais */
+    border-bottom: 1px solid #e0e0e0; /* Linha sutil de separação */
+    flex-shrink: 0;            /* Garante que a barra não encolha */
+    box-sizing: border-box;
+}
+
+/* A LISTA DE LINKS */
+.menu-navegacao ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex; /* Mantém os itens na mesma linha */
+    align-items: center; /* Alinha verticalmente no centro */
+}
+
+/* O ITEM DA LISTA (AGORA USADO PARA ESPAÇAMENTO) */
+.menu-navegacao li {
+    margin-right: 10px; /* Pequeno espaço entre os links */
+}
+
+/* O LINK INDIVIDUAL */
+.menu-navegacao a {
+    display: block;
+    padding: 18px 12px; /* Mais padding vertical para uma área de clique boa, menos horizontal */
+    color: #555; /* Cor de texto mais suave */
+    text-decoration: none;
+    font-weight: 600; /* Letra mais forte */
+    font-size: 15px;
+    border-bottom: 3px solid transparent; /* Borda inferior INVISÍVEL que aparecerá no hover/ativo */
+    transition: all 0.2s ease-in-out;
+}
+
+/* EFEITO AO PASSAR O MOUSE */
+.menu-navegacao a:hover {
+    color: #007bff; /* Cor do link muda para o azul principal */
+    border-bottom-color: #007bff; /* A borda inferior aparece com a cor azul */
+}
+
+/*
+ * CLASSE PARA A PÁGINA ATIVA (MUITO IMPORTANTE!)
+ * Você vai adicionar class="ativo" no link da página atual.
+*/
+.menu-navegacao a.ativo {
+    color: #0056b3; /* Cor mais forte para o link ativo */
+    border-bottom-color: #0056b3; /* Borda inferior permanente para a página ativa */
 }
