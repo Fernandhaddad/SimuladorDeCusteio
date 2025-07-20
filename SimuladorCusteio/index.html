@@ -82,7 +82,25 @@
                 </div>
                 
                 <button id="calcular-rota">Calcular Frete Mínimo</button>
-                <div id="resultados"></div>
+                
+                <div id="resultados">
+                    <div id="loading-message" class="resultado-bloco" style="display: none;"><strong>Processando e calculando...</strong></div>
+                    <div id="aviso-multi-viagem" class="resultado-bloco aviso" style="display: none;"></div>
+                    <div id="distancia-veiculo" class="resultado-bloco" style="display: none;"></div>
+                    <div id="custo-antt" class="resultado-bloco" style="display: none;">
+                        <strong id="custo-antt-valor" style="font-size: 1.2em; color: #007bff;"></strong><br>
+                        <span id="custo-antt-detalhe" style="font-size: 0.9em; color: #555;"></span>
+                    </div>
+                    <div id="custo-ntc" class="resultado-bloco" style="display: none;">
+                        <strong id="custo-ntc-valor" style="font-size: 1.2em; color: #28a745;"></strong><br>
+                        <span id="custo-ntc-detalhe" style="font-size: 0.9em; color: #555;"></span>
+                    </div>
+                    <div id="duracao-total" class="resultado-bloco" style="display: none;">
+                        <strong id="duracao-total-valor" style="font-size: 1.1em;"></strong><br>
+                        <span id="duracao-total-detalhe" style="font-size: 0.9em; color: #555;"></span>
+                    </div>
+                     <div id="error-display-message" class="resultado-bloco error-message" style="display: none;"></div>
+                </div>
             </div>
         </div>
 

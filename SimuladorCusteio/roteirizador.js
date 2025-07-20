@@ -44,48 +44,83 @@ function adicionarCampoParada() {
 // 3. FUNÇÕES DE API (Geocodificação e Rotas)
 // =================================================================
 
-async function geocodeAddress(address) {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+// Encontre a função processarEndereco e substitua por esta
+
+// Verifique se a sua função em roteirizador.js está igual a esta
+
+async function processarEndereco(enderecoInput) {
+    // 1. Tenta processar como CEP primeiro (mais confiável)
+    const cepLimpo = enderecoInput.replace(/\D/g, ''); // Limpa o input, removendo hífens, etc.
+    if (/^\d{8}$/.test(cepLimpo)) {
+        try {
+            // 2. Se for CEP, usa a BrasilAPI que retorna endereço E coordenadas
+            const response = await fetch(`https://brasilapi.com.br/api/cep/v2/${cepLimpo}`);
+            if (response.ok) {
+                const data = await response.json();
+                // VERIFICAÇÃO DEFENSIVA
+                if (data.location?.coordinates?.latitude && data.location?.coordinates?.longitude) {
+                    return {
+                        endereco: `${data.street}, ${data.city}`,
+                        coords: {
+                            lat: data.location.coordinates.latitude,
+                            lon: data.location.coordinates.longitude
+                        }
+                    };
+                }
+            }
+        } catch (error) {
+            console.warn(`Falha na BrasilAPI para o CEP ${cepLimpo}. Tentando como endereço.`, error);
+        }
+    }
+
+    // 3. Se não for um CEP ou se a primeira tentativa falhar, usa o Nominatim
     try {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoInput)}`;
         const response = await fetch(url);
         const data = await response.json();
         if (data && data.length > 0) {
-            return { lat: data[0].lat, lon: data[0].lon };
-        } else {
-            throw new Error(`Endereço não encontrado para: "${address}"`);
+            // VERIFICAÇÃO DEFENSIVA
+            const lat = data[0].lat;
+            const lon = data[0].lon;
+            if (lat && lon) {
+                return {
+                    endereco: data[0].display_name.split(',')[0],
+                    coords: { lat: lat, lon: lon }
+                };
+            }
         }
     } catch (error) {
-        console.error('Erro de geocodificação:', error);
-        throw error;
+        console.error(`Falha ao geocodificar "${enderecoInput}" com Nominatim`, error);
     }
+    
+    // 4. Se NENHUM método funcionar ou retornar coordenadas válidas, retorna nulo
+    console.warn(`Não foi possível obter coordenadas válidas para: "${enderecoInput}". Ponto descartado.`);
+    return null;
 }
 
-async function fetchRoute(coordsArray) {
+async function fetchOptimalRoute(coordsArray, roundtrip) {
     const profile = 'driving';
     const coordsString = coordsArray.map(c => `${c.lon},${c.lat}`).join(';');
-    const osrmUrl = `https://router.project-osrm.org/route/v1/${profile}/${coordsString}?overview=full&geometries=geojson`;
+    const osrmUrl = `https://router.project-osrm.org/trip/v1/${profile}/${coordsString}?source=first&roundtrip=${roundtrip}&overview=full&geometries=geojson`;
 
     try {
         const response = await fetch(osrmUrl);
         const data = await response.json();
-        if (data.code !== 'Ok') {
-            throw new Error(data.message || 'Não foi possível calcular a rota via OSRM.');
-        }
-        return data.routes[0];
+        if (data.code !== 'Ok') { throw new Error(data.message || 'Não foi possível otimizar a rota.'); }
+        return data; 
     } catch (error) {
-        console.error('Erro ao buscar rota no OSRM:', error);
         throw error;
     }
 }
 
 // =================================================================
-// 4. FUNÇÃO PRINCIPAL DO ROTEIRIZADOR (VERSÃO SOLICITADA + NÚMEROS)
+// 4. FUNÇÃO PRINCIPAL DO ROTEIRIZADOR (LÓGICA FINAL)
 // =================================================================
 
 async function criarRotaNoMapa() {
     routeLayer.clearLayers();
     const infoRotaDiv = document.getElementById('info-rota');
-    infoRotaDiv.innerHTML = 'Processando...';
+    infoRotaDiv.innerHTML = 'Processando endereços e otimizando a rota...';
 
     const saidaInput = document.getElementById('ponto-saida').value;
     const paradaInputs = document.querySelectorAll('.ponto-parada');
@@ -96,19 +131,32 @@ async function criarRotaNoMapa() {
         return;
     }
 
-    let todosEnderecos = [saidaInput, ...Array.from(paradaInputs).map(input => input.value)];
+    const todosEnderecosParaProcessar = [saidaInput, ...Array.from(paradaInputs).map(input => input.value)];
     const retornarOrigem = document.getElementById('retornar-origem').checked;
 
     try {
-        let geocodePromises = todosEnderecos.map(addr => geocodeAddress(addr));
-        let todasCoordenadas = await Promise.all(geocodePromises);
+        const processamentoPromises = todosEnderecosParaProcessar.map(addr => processarEndereco(addr));
+        const pontosProcessados = await Promise.all(processamentoPromises);
 
-        if (retornarOrigem) {
-            todosEnderecos.push(saidaInput);
-            todasCoordenadas.push(todasCoordenadas[0]);
+        const pontosValidos = pontosProcessados.filter(p => p !== null);
+
+        if (pontosValidos.length < 2) {
+            throw new Error("São necessários pelo menos 2 endereços válidos para criar uma rota.");
+        }
+        
+        const coordenadasValidas = pontosValidos.map(p => p.coords);
+
+        const resultadoOtimizado = await fetchOptimalRoute(coordenadasValidas, retornarOrigem);
+        
+        const rota = resultadoOtimizado.trips[0];
+        const waypointsOtimizados = resultadoOtimizado.waypoints;
+
+        if (!rota || !waypointsOtimizados) {
+            throw new Error("A API não retornou uma rota otimizada válida.");
         }
 
-        const rota = await fetchRoute(todasCoordenadas);
+        // Usa os nomes retornados pela API para garantir consistência
+        const ordemFormatada = waypointsOtimizados.map(wp => wp.name || "Ponto desconhecido").join(' &rarr; ');
 
         const distanciaKm = (rota.distance / 1000).toFixed(2);
         const duracaoSegundos = rota.duration;
@@ -118,50 +166,31 @@ async function criarRotaNoMapa() {
             return `${horas}h ${minutos}min`;
         };
         infoRotaDiv.innerHTML = `
-            <div class="resultado-bloco"><strong>Distância Total:</strong> ${distanciaKm} km</div>
+            <div class="resultado-bloco"><strong>Distância Otimizada:</strong> ${distanciaKm} km</div>
             <div class="resultado-bloco"><strong>Tempo Estimado:</strong> ${formatarDuracao(duracaoSegundos)}</div>
+            <div class="resultado-bloco">
+                <strong>Ordem de Atendimento:</strong><br>
+                <span style="font-size: 0.9em; color: #555;">${ordemFormatada}</span>
+            </div>
         `;
 
         const routeLine = L.geoJSON(rota.geometry, { style: { color: '#0056b3', weight: 6 } });
         routeLayer.addLayer(routeLine);
+        
+        // --- LÓGICA DE MARCADORES 100% BASEADA NA RESPOSTA DA API ---
+        waypointsOtimizados.forEach((waypoint, index) => {
+            const numeroDoPonto = index + 1;
+            const popupTexto = `<b>Ponto ${numeroDoPonto}:</b><br>${waypoint.name || 'Localização aproximada'}`;
 
-        // --- LÓGICA ATUALIZADA PARA EVITAR SOBREPOSIÇÃO DE MARCADORES ---
-        todosEnderecos.forEach((endereco, index) => {
-            const coords = todasCoordenadas[index];
-            let popupTexto = '';
-            let numeroDoPonto = index + 1;
-
-            // Se for o último ponto de um retorno à origem, nós simplesmente pulamos a criação do marcador
-            if (retornarOrigem && index === todosEnderecos.length - 1) {
-                return; // Pula para a próxima iteração (não faz nada)
-            }
-            
-            // Lógica de texto atualizada para o marcador
-            if (index === 0) {
-                if (retornarOrigem) {
-                    popupTexto = `<b>Saída e Retorno:</b><br>${endereco}`;
-                    numeroDoPonto = `1 / ${todosEnderecos.length}`; // Ex: "1 / 4"
-                } else {
-                    popupTexto = `<b>Saída:</b><br>${endereco}`;
-                    // numeroDoPonto já é '1'
-                }
-            } else {
-                popupTexto = `<b>Parada ${numeroDoPonto}:</b><br>${endereco}`;
-                // numeroDoPonto já é '2', '3', etc.
-            }
-
-            L.marker([coords.lat, coords.lon])
+            L.marker([waypoint.location[1], waypoint.location[0]]) // [lat, lon]
                 .addTo(routeLayer)
                 .bindPopup(popupTexto)
                 .bindTooltip(String(numeroDoPonto), {
-                    permanent: true,
-                    direction: 'top',
-                    offset: [0, -10],
-                    className: 'marker-label'
+                    permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'
                 });
         });
         
-        map.fitBounds(routeLine.getBounds());
+        map.fitBounds(routeLayer.getBounds(), {padding: [50, 50]});
 
     } catch (error) {
         alert('Falha ao criar a rota: ' + error.message);
@@ -170,7 +199,8 @@ async function criarRotaNoMapa() {
 }
 
 // =================================================================
-// 5. EVENT LISTENERS (Ponto de Entrada da Página)
+// 5. EVENT LISTENERS
 // =================================================================
+
 document.getElementById('criar-rota').addEventListener('click', criarRotaNoMapa);
 document.getElementById('adicionar-parada').addEventListener('click', adicionarCampoParada);

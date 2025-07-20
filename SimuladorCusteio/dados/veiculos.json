@@ -1,11 +1,19 @@
 {
     "toco": {
         "nome": "Toco",
-        "pesoMaximo": 16,
+        "pesoMaximo": 16,  
         "eixos": 2,
         "valor": 350000,
         "vidaUtilAnos": 10,
-        "custoManutencaoMensal": 2000
+        "custoManutencaoMensal": 2000,
+        "capacidadeToneladas": 8,      
+        "salarioMotoristaMensal": 3000,       
+        "encargosSociaisMotorista": 0.80,    
+        "valorSemPneus": 332500,             
+        "custoPneuPorKm": 0.30,             
+        "custoLubrificantesPorKm": 0.05,     
+        "custoLavagemGraxasPorKm": 0.03,    
+        "seguroMensalEstimado": 250         
     },
     "trucado": {
         "nome": "Caminhão Truck",
@@ -13,7 +21,15 @@
         "eixos": 3,
         "valor": 450000,
         "vidaUtilAnos": 10,
-        "custoManutencaoMensal": 2500
+        "custoManutencaoMensal": 2500,
+        "capacidadeToneladas": 14,          
+        "salarioMotoristaMensal": 3200,      
+        "encargosSociaisMotorista": 0.80,   
+        "valorSemPneus": 427500,             
+        "custoPneuPorKm": 0.40,              
+        "custoLubrificantesPorKm": 0.06,     
+        "custoLavagemGraxasPorKm": 0.04,     
+        "seguroMensalEstimado": 300         
     },
     "cavalo_toco_4e": {
         "nome": "Cavalo Mecânico Simples",
@@ -21,7 +37,15 @@
         "eixos": 4,
         "valor": 550000,
         "vidaUtilAnos": 12,
-        "custoManutencaoMensal": 3000
+        "custoManutencaoMensal": 3000,
+        "capacidadeToneladas": 20,           
+        "salarioMotoristaMensal": 3500,       
+        "encargosSociaisMotorista": 0.85,    
+        "valorSemPneus": 522500,             
+        "custoPneuPorKm": 0.50,              
+        "custoLubrificantesPorKm": 0.07,     
+        "custoLavagemGraxasPorKm": 0.05,    
+        "seguroMensalEstimado": 400         
     },
     "cavalo_toco_ls": {
         "nome": "Cavalo Mecânico Simples + Semirreboque",
@@ -29,7 +53,15 @@
         "eixos": 5,
         "valor": 750000,
         "vidaUtilAnos": 12,
-        "custoManutencaoMensal": 4000
+        "custoManutencaoMensal": 4000,
+        "capacidadeToneladas": 27,          
+        "salarioMotoristaMensal": 3800,      
+        "encargosSociaisMotorista": 0.85,    
+        "valorSemPneus": 712500,             
+        "custoPneuPorKm": 0.60,              
+        "custoLubrificantesPorKm": 0.08,     
+        "custoLavagemGraxasPorKm": 0.06,     
+        "seguroMensalEstimado": 500         
     },
     "vanderleia": {
         "nome": "Vanderleia / Cavalo Trucado + Semirreboque",
@@ -37,7 +69,15 @@
         "eixos": 6,
         "valor": 850000,
         "vidaUtilAnos": 12,
-        "custoManutencaoMensal": 4500
+        "custoManutencaoMensal": 4500,
+        "capacidadeToneladas": 35,           
+        "salarioMotoristaMensal": 4000,       
+        "encargosSociaisMotorista": 0.90,    
+        "valorSemPneus": 807500,             
+        "custoPneuPorKm": 0.70,             
+        "custoLubrificantesPorKm": 0.09,     
+        "custoLavagemGraxasPorKm": 0.07,    
+        "seguroMensalEstimado": 550         
     },
     "romeu_julieta": {
         "nome": "Romeu e Julieta",
@@ -45,7 +85,15 @@
         "eixos": 7,
         "valor": 900000,
         "vidaUtilAnos": 15,
-        "custoManutencaoMensal": 5000
+        "custoManutencaoMensal": 5000,
+        "capacidadeToneladas": 30,           
+        "salarioMotoristaMensal": 4200,       
+        "encargosSociaisMotorista": 0.90,    
+        "valorSemPneus": 855000,             
+        "custoPneuPorKm": 0.80,              
+        "custoLubrificantesPorKm": 0.10,     
+        "custoLavagemGraxasPorKm": 0.08,     
+        "seguroMensalEstimado": 600         
     },
     "rodotrem": {
         "nome": "Rodotrem / Bi-trem",
@@ -53,6 +101,14 @@
         "eixos": 9,
         "valor": 1100000,
         "vidaUtilAnos": 15,
-        "custoManutencaoMensal": 6000
+        "custoManutencaoMensal": 6000,
+        "capacidadeToneladas": 50,           
+        "salarioMotoristaMensal": 4500,       
+        "encargosSociaisMotorista": 0.90,    
+        "valorSemPneus": 1045000,           
+        "custoPneuPorKm": 1.00,             
+        "custoLubrificantesPorKm": 0.12,     
+        "custoLavagemGraxasPorKm": 0.10,     
+        "seguroMensalEstimado": 700         
     }
 }

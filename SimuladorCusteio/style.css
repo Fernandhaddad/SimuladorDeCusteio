@@ -268,3 +268,13 @@ button:hover {
     border: none;
     box-shadow: none;
 }
+.error-message {
+    background-color: #ffe0e0;
+    color: #dc3545;
+    border-color: #dc3545;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid;
+    margin-top: 10px;
+    display: block; /* Garante que o bloco de erro apareça */
+}
