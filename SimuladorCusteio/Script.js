@@ -365,9 +365,10 @@ async function calculateAndDisplayRoute() {
         const custoPorViagemANTT = calcularCustoFreteANTTOfficial(distanciaKm, veiculoSelecionado, tipoCarga, tipoOperacao);
         const custoTotalOperacaoANTT = custoPorViagemANTT.custoTotal * numeroDeViagens;
 
-        // --- CÁLCULO 2: Seu Custo Operacional Total (NTC) ---
+        // --- CÁLCULO 2: Seu Custo Operacional Total (NTC) - CORRIGIDO ---
         const fretePesoPorToneladaNTC = calcularSeuCustoOperacionalTotalNTC(distanciaKm, veiculoSelecionado, tipoCarga, ufOrigem);
-        const seuCustoOperacionalTotalNTC = fretePesoPorToneladaNTC * pesoCarga; // Multiplica o custo/ton pelo peso total da carga
+        const custoDeUmaViagemNTC = fretePesoPorToneladaNTC * veiculoSelecionado.capacidadeToneladas;
+        const seuCustoOperacionalTotalNTC = custoDeUmaViagemNTC * numeroDeViagens;
 
         // --- Cálculos de Duração ---
         const duracaoRealistaPorViagem = calcularDuracaoRealista(tempoConducaoOriginalSegundos);
@@ -385,7 +386,7 @@ async function calculateAndDisplayRoute() {
         custoAnttValorElem.parentElement.style.display = 'block';
         
         custoNtcValorElem.textContent = `Seu Custo Operacional Total (NTC): R$ ${seuCustoOperacionalTotalNTC.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        custoNtcDetalheElem.innerHTML = `Custo por tonelada de R$ ${fretePesoPorToneladaNTC.toLocaleString('pt-BR', {minimumFractionDigits: 2})} aplicado ao peso total da carga. <br>Calculado com base no Manual de Custos da NTC&Logística.`;
+        custoNtcDetalheElem.innerHTML = `Baseado em ${numeroDeViagens} viagem(ns) de R$ ${custoDeUmaViagemNTC.toLocaleString('pt-BR', {minimumFractionDigits: 2})} cada.<br>Calculado com base no Manual de Custos da NTC&Logística.`;
         custoNtcValorElem.parentElement.style.display = 'block';
         
         duracaoTotalValorElem.textContent = `Duração Total da Operação: ${formatarDuracao(duracaoTotalOperacaoSegundos)}`;
