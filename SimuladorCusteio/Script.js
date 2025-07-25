@@ -149,14 +149,20 @@ function calcularDuracaoRealista(tempoConducaoSegundos) {
 function calcularCustoFreteANTTOfficial(distanciaKm, veiculo, tipoCarga, tipoOperacao) {
     const numEixos = veiculo.eixos;
     const tabelaSelecionada = tabelaAnttData[tipoOperacao];
-    if (!tabelaSelecionada) { throw new Error("Tipo de operação (Tabela ANTT) inválido."); }
+    if (!tabelaSelecionada) {
+        throw new Error("Tipo de operação (Tabela ANTT) inválido.");
+    }
     const coeficientes = tabelaSelecionada.cargas[tipoCarga]?.[numEixos];
-    if (!coeficientes || coeficientes.ccd === null) { throw new Error(`Combinação inválida: Não há valor na ${tabelaSelecionada.titulo} para o tipo de carga selecionado com um veículo de ${numEixos} eixos.`); }
-    
-    const custoDeslocamento = distanciaKm * coeficientes.ccd;
+    if (!coeficientes || coeficientes.ccd === null) {
+        throw new Error(`Combinação inválida: Não há valor na ${tabelaSelecionada.titulo} para o tipo de carga selecionado com um veículo de ${numEixos} eixos.`);
+    }
+    let custoDeslocamentoTotal = distanciaKm * coeficientes.ccd;
     const custoCargaDescarga = coeficientes.cc;
-    const custoTotal = custoDeslocamento + custoCargaDescarga; // Cálculo apenas do valor de ida
-    
+    // VERIFICAÇÃO: Duplicar o deslocamento APENAS para Carga Lotação (Tabela A ou C)
+    if (tipoOperacao === 'tabela_a' || tipoOperacao === 'tabela_c') {
+        custoDeslocamentoTotal *= 2; // Inclui o retorno vazio
+    } 
+    const custoTotal = custoDeslocamentoTotal + custoCargaDescarga; 
     return { custoTotal: custoTotal, tituloTabela: tabelaSelecionada.titulo };
 }
 
