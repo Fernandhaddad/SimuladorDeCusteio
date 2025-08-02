@@ -10,17 +10,16 @@ let precosCombustivelData = {};
 let custosPneusData = {};
 let custosFixosAnuaisData = {};
 
-// Constantes Globais para o CÁLCULO NTC (Seu Custo Operacional Total)
-const GLOBAL_HORAS_TRABALHADAS_MES = 220; // H: Horas trabalhadas por mês (NTC sugere 200 a 240)
-const GLOBAL_VELOCIDADE_MEDIA_KMH = 60;   [cite_start]// V: Velocidade média de transporte em km/h [cite: 153]
-const GLOBAL_COEFICIENTE_TERMINAIS = 1.0; [cite_start]// C: Coeficiente de uso de terminais (valor médio = 1) [cite: 155]
-const GLOBAL_LUCRO_OPERACIONAL_PERCENTUAL = 15; // L: Lucro operacional em percentual (ex: 15 para 15% de lucro)
-const GLOBAL_TEMPO_CARGA_DESCARGA_HORAS = 3; [cite_start]// Tcd: Tempo de carga e descarga em horas (para lotação) [cite: 150, 359]
-const GLOBAL_DESPESAS_INDIRETAS_MENSAIS = 50000; [cite_start]// DAT: Despesas administrativas e de terminais mensais [cite: 126]
-const GLOBAL_TONELAGEM_EXPEDIDA_MENSAL = 1000; [cite_start]// T.EXP: Tonelagem expedida pela empresa no mês (para rateio do DI) [cite: 153]
-const GLOBAL_TAXA_REMUNERACAO_CAPITAL_ANUAL = 0.12; // 12% ao ano
-const GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO = 0.95; [cite_start]// 95% de perda, 5% de valor de revenda [cite: 85]
-
+// Constantes Globais para o CÁLCULO NTC
+const GLOBAL_HORAS_TRABALHADAS_MES = 220;
+const GLOBAL_VELOCIDADE_MEDIA_KMH = 60;
+const GLOBAL_COEFICIENTE_TERMINAIS = 1.0;
+const GLOBAL_LUCRO_OPERACIONAL_PERCENTUAL = 15;
+const GLOBAL_TEMPO_CARGA_DESCARGA_HORAS = 3;
+const GLOBAL_DESPESAS_INDIRETAS_MENSAIS = 50000;
+const GLOBAL_TONELAGEM_EXPEDIDA_MENSAL = 1000;
+const GLOBAL_TAXA_REMUNERACAO_CAPITAL_ANUAL = 0.12;
+const GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO = 0.95;
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -43,21 +42,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         [tabelaAnttData, veiculosData, salariosData, estadoParaUFData, custosVariaveisData, precosCombustivelData, custosPneusData, custosFixosAnuaisData] = await Promise.all(responses.map(r => r.json()));
         
-        console.log("Todos os 8 arquivos de dados foram carregados com sucesso.");
-
         const calcularRotaBtn = document.getElementById('calcular-rota');
         if (calcularRotaBtn) {
             calcularRotaBtn.addEventListener('click', calculateAndDisplayRoute);
-            console.log("Botão 'Calcular Frete Mínimo' configurado com sucesso.");
-        } else {
-            alert("Erro: Botão 'calcular-rota' não encontrado no HTML. O simulador não funcionará.");
-            console.error("Elemento com ID 'calcular-rota' não encontrado.");
         }
 
     } catch (error) {
         console.error("Falha ao carregar dados iniciais:", error);
         document.getElementById('resultados').innerHTML = `<div class="resultado-bloco error-message">Falha ao carregar dados. ${error.message}</div>`;
-        alert("Não foi possível carregar os arquivos de dados. A aplicação não funcionará. Verifique o console para mais detalhes.");
     }
 });
 
@@ -70,38 +62,30 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 const routeLayer = L.layerGroup().addTo(map);
 
-
 // =================================================================
-// 3. FUNÇÕES DE API (Comunicação Externa)
+// 3. FUNÇÕES DE API E UTILITÁRIAS
 // =================================================================
 async function geocodeAddress(address) {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&addressdetails=1`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        if (data && data.length > 0) {
-            const details = data[0];
-            const estado = (details.address && details.address.state) ? details.address.state : '';
-            return { lat: details.lat, lon: details.lon, estado: estado };
-        } else { throw new Error(`Endereço não encontrado para: "${address}"`); }
-    } catch (error) { console.error('Erro de geocodificação:', error); throw error; }
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data && data.length > 0) {
+        const details = data[0];
+        const estado = (details.address && details.address.state) ? details.address.state : '';
+        return { lat: details.lat, lon: details.lon, estado: estado };
+    } else { throw new Error(`Endereço não encontrado: "${address}"`); }
 }
 
 async function fetchAddressFromCep(cep) {
     const url = `https://viacep.com.br/ws/${cep}/json/`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        if (data.erro) { throw new Error('CEP não encontrado.'); }
-        return `${data.logradouro}, ${data.bairro}, ${data.localidade} - ${data.uf}`;
-    } catch (error) { console.error('Erro ao buscar CEP:', error); throw error; }
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.erro) { throw new Error('CEP não encontrado.'); }
+    return `${data.logradouro}, ${data.bairro}, ${data.localidade} - ${data.uf}`;
 }
 
-
-// =================================================================
-// 4. FUNÇÕES DE CÁLCULO E LÓGICA DE NEGÓCIO
-// =================================================================
 function getValidCep(input) { if (!input) return null; const cepLimpo = input.replace(/\D/g, ''); return /^\d{8}$/.test(cepLimpo) ? cepLimpo : null; }
+
 function formatarDuracao(totalSegundos) {
     if (totalSegundos < 0) return "0s";
     const dias = Math.floor(totalSegundos / 86400);
@@ -112,6 +96,7 @@ function formatarDuracao(totalSegundos) {
     if (minutos > 0) resultado += `${minutos}min`;
     return resultado.trim() || "0min";
 }
+
 function calcularDuracaoRealista(tempoConducaoSegundos) {
     const MAX_CONDUCAO_CONTINUA = 5.5 * 3600;
     const DESCANSO_CURTO = 30 * 60;
@@ -136,20 +121,21 @@ function calcularDuracaoRealista(tempoConducaoSegundos) {
 }
 
 // =================================================================
-// FUNÇÕES DE CÁLCULO ANTT (TABELA OFICIAL)
+// 4. FUNÇÕES DE CÁLCULO
 // =================================================================
+
 function calcularCustoFreteANTTOfficial(distanciaKm, veiculo, tipoCarga, tipoOperacao) {
     const numEixos = veiculo.eixos;
     const tabelaSelecionada = tabelaAnttData[tipoOperacao];
     if (!tabelaSelecionada) { throw new Error("Tipo de operação (Tabela ANTT) inválido."); }
     const coeficientes = tabelaSelecionada.cargas[tipoCarga]?.[numEixos];
-    if (!coeficientes || coeficientes.ccd === null) { throw new Error(`Combinação inválida: Não há valor na ${tabelaSelecionada.titulo} para o tipo de carga selecionado com um veículo de ${numEixos} eixos.`); }
+    if (!coeficientes || coeficientes.ccd === null) { throw new Error(`Combinação inválida: Não há valor na ${tabelaSelecionada.titulo} para o tipo de carga com ${numEixos} eixos.`); }
     
     let custoDeslocamento = distanciaKm * coeficientes.ccd;
     const custoCargaDescarga = coeficientes.cc;
 
     if (tipoOperacao === 'tabela_a' || tipoOperacao === 'tabela_c') {
-        custoDeslocamento *= 2; // Custo de ida e volta (retorno vazio)
+        custoDeslocamento *= 2;
     }
 
     const custoTotal = custoDeslocamento + custoCargaDescarga;
@@ -157,56 +143,52 @@ function calcularCustoFreteANTTOfficial(distanciaKm, veiculo, tipoCarga, tipoOpe
     return { custoTotal: custoTotal, tituloTabela: tabelaSelecionada.titulo };
 }
 
-// =================================================================
-// FUNÇÕES DE CÁLCULO NTC (SEU CUSTO OPERACIONAL)
-// =================================================================
-
-/**
- * Calcula o Custo Fixo Mensal (CF) do veículo, conforme NTC (Cap. III).
- * @returns {number} O Custo Fixo Mensal (CF) em R$.
- */
 function calcularCustoFixoMensalVeiculoNTC(veiculo, ufOrigem) {
-    const RC = veiculo.valor * (GLOBAL_TAXA_REMUNERACAO_CAPITAL_ANUAL / 12);
+    const valorTotalConjunto = veiculo.valor + (veiculo.equipamento?.valor || 0);
+    const RC = valorTotalConjunto * (GLOBAL_TAXA_REMUNERACAO_CAPITAL_ANUAL / 12);
 
     const salarioBase = salariosData[ufOrigem] || veiculo.salarioMotoristaMensal;
-    const SM = (1 + veiculo.encargosSociaisMotorista) * salarioBase * 1;
+    const SM = (1 + veiculo.encargosSociaisMotorista) * salarioBase;
 
     const SO = (veiculo.valor * 0.003);
 
     const RV = (GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO * veiculo.valorSemPneus) / (veiculo.vidaUtilAnos * 12);
+    
+    const RE = (GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO * (veiculo.equipamento?.valorSemPneus || 0)) / ((veiculo.equipamento?.vidaUtilAnos || 1) * 12);
 
     const ipvaAnual = veiculo.valor * 0.015;
     const licenciamentoAnual = custosFixosAnuaisData.licenciamento_anual[ufOrigem] || 150;
-    // Adicionar DPVAT (valor simbólico, pois varia muito. Usando uma média)
-    const dpvatAnual = 100;
-    const TI = (ipvaAnual + licenciamentoAnual + dpvatAnual) / 12;
-
-    // Simplificação dos seguros. O ideal seria ter inputs para os prêmios.
-    const SV_SE_RCF = (veiculo.valor * 0.04) / 12;
-
-    const custoFixoMensalTotal = RC + SM + SO + RV + TI + SV_SE_RCF;
+    const dpvatAnual = custosFixosAnuaisData.dpvat_anual || 105.65;
+    const tacografoAnual = (custosFixosAnuaisData.taxa_vistoria_tacografo_bienal || 207.34) / 2;
+    const TI = (ipvaAnual + licenciamentoAnual + dpvatAnual + tacografoAnual) / 12;
     
-    return custoFixoMensalTotal;
+    const IOF = 1.07;
+    const seguroParams = veiculo.seguros || {};
+
+    const v1 = (veiculo.valor * (seguroParams.veiculo_premio_ref_percentual || 0.02));
+    const v2 = (veiculo.valor * (seguroParams.veiculo_importancia_segurada_percentual || 0.015));
+    const SV = ((v1 + v2 + (seguroParams.custo_apolice || 100)) * IOF) / 12;
+
+    const v3 = ((veiculo.equipamento?.valor || 0) * (seguroParams.equipamento_premio_ref_percentual || 0));
+    const v4 = ((veiculo.equipamento?.valor || 0) * (seguroParams.equipamento_importancia_segurada_percentual || 0));
+    const SE = ((v3 + v4 + (seguroParams.custo_apolice || 100)) * IOF) / 12;
+    
+    const RCF = (((seguroParams.rcf_danos_materiais_anual || 800) + (seguroParams.rcf_danos_pessoais_anual || 400) + (seguroParams.custo_apolice || 100)) * IOF) / 12;
+
+    return RC + SM + SO + RV + RE + TI + SV + SE + RCF;
 }
 
-/**
- * Calcula o Custo Variável por KM (CV) do veículo, conforme NTC (Cap. III).
- * ATUALIZADO para usar os parâmetros do veiculos.json e com fórmulas completas.
- * @returns {number} O Custo Variável (CV) em R$/km.
- */
 function calcularCustoVariavelPorKmNTC(veiculo, tipoCarga, ufOrigem) {
     const quilometragemMensal = GLOBAL_HORAS_TRABALHADAS_MES * GLOBAL_VELOCIDADE_MEDIA_KMH;
     const numEixos = veiculo.eixos;
-    const custosVar = veiculo.custosVariaveis; // Atalho para os novos dados do veiculo.json
+    const custosVar = veiculo.custosVariaveis || {};
 
-    // PM = Peças, acessórios e material de manutenção
     const PM = (veiculo.valorSemPneus * 0.01) / quilometragemMensal;
 
-    // DC (Combustível) e AD (Arla)
     const { precos, consumo_arla_percentual_sobre_diesel, consumo_diesel_kml } = custosVariaveisData;
     const precoDieselDoEstado = precosCombustivelData[ufOrigem];
     let rendimentoKmL = consumo_diesel_kml.outros[numEixos];
-    if (consumo_diesel_kml.excecoes[tipoCarga] && consumo_diesel_kml.excecoes[tipoCarga][numEixos]) {
+    if (consumo_diesel_kml.excecoes[tipoCarga]?.[numEixos]) {
         rendimentoKmL = consumo_diesel_kml.excecoes[tipoCarga][numEixos];
     } else if (tipoCarga === 'frigorificada' || tipoCarga === 'perigosa_frigorificada') {
         rendimentoKmL = consumo_diesel_kml.frigorificada[numEixos];
@@ -216,25 +198,23 @@ function calcularCustoVariavelPorKmNTC(veiculo, tipoCarga, ufOrigem) {
     const litrosArlaPorKm = litrosDieselPorKm * consumo_arla_percentual_sobre_diesel;
     const AD = litrosArlaPorKm * precos.arla32_litro;
 
-    // LB (Lubrificantes) - Usando dados do JSON e fórmulas NTC
-    const taxaReposicaoPorKm = custosVar.taxa_reposicao_oleo_motor_l_por_1000km / 1000.0;
-    const LM = custosVar.preco_lubrificante_motor_litro * ((custosVar.volume_carter_litros / custosVar.km_troca_oleo_motor) + taxaReposicaoPorKm);
-    const LT = (custosVar.volume_transmissao_litros * custosVar.preco_lubrificante_transmissao_litro) / custosVar.km_troca_oleo_transmissao;
+    const taxaReposicaoPorKm = (custosVar.taxa_reposicao_oleo_motor_l_por_1000km || 1) / 1000.0;
+    const LM = (custosVar.preco_lubrificante_motor_litro || 35) * (((custosVar.volume_carter_litros || 40) / (custosVar.km_troca_oleo_motor || 20000)) + taxaReposicaoPorKm);
+    const LT = ((custosVar.volume_transmissao_litros || 20) * (custosVar.preco_lubrificante_transmissao_litro || 45)) / (custosVar.km_troca_oleo_transmissao || 80000);
     const LB = LM + LT;
 
-    // LG (Lavagem e graxas) - Usando dados do JSON e fórmula NTC
-    const LG = custosVar.preco_lavagem_completa / custosVar.km_entre_lavagens;
+    const LG = (custosVar.preco_lavagem_completa || 150) / (custosVar.km_entre_lavagens || 5000);
 
-    // PR (Pneus e recauchutagem) - Usando dados do JSON e fórmula NTC completa
     const { preco_pneu_novo, recauchutagem, vida_util_km, numero_pneus } = custosPneusData;
+    const percentualPerdaPneus = custosVar.percentual_perda_pneus || 0.07;
 
     const precoDirecional = preco_pneu_novo.direcional[numEixos];
-    const custoTotalCicloDirecional = (1 + custosVar.percentual_perda_pneus) * precoDirecional;
+    const custoTotalCicloDirecional = (1 + percentualPerdaPneus) * precoDirecional;
     const custoDirecionalPorKm = (custoTotalCicloDirecional / vida_util_km.direcional_sem_recauchutagem);
 
     const precoTraseiro = preco_pneu_novo.traseiro[numEixos];
     const custoTotalRecapagens = recauchutagem.preco * recauchutagem.numero_por_pneu_traseiro;
-    const custoTotalCicloTraseiro = ((1 + custosVar.percentual_perda_pneus) * precoTraseiro) + custoTotalRecapagens;
+    const custoTotalCicloTraseiro = ((1 + percentualPerdaPneus) * precoTraseiro) + custoTotalRecapagens;
     const vidaUtilTotalTraseiro = vida_util_km.traseiro_com_recauchutagem * (1 + recauchutagem.numero_por_pneu_traseiro);
     const custoTraseiroPorKm = (custoTotalCicloTraseiro / vidaUtilTotalTraseiro);
 
@@ -247,41 +227,23 @@ function calcularCustoVariavelPorKmNTC(veiculo, tipoCarga, ufOrigem) {
     return custoVariavelPorKmTotal;
 }
 
-
-/**
- * Calcula o frete-peso da NTC (Seu Custo Operacional Total).
- * Fórmula: F = (A + BX + DI) * (1 + L/100)
- * @returns {number} O valor do frete em R$ por tonelada.
- */
-function calcularSeuCustoOperacionalTotalNTC(distanciaKm, veiculo, tipoCarga, ufOrigem) {
-    if (!veiculo || !veiculo.capacidadeToneladas || veiculo.capacidadeToneladas <= 0) {
-        throw new Error("Dados do veículo inválidos ou capacidade em toneladas não definida para o cálculo NTC.");
-    }
-    if (distanciaKm <= 0) {
-        throw new Error("Distância inválida para o cálculo NTC.");
-    }
-
+function calcularFretePesoNTC(distanciaKm, veiculo, tipoCarga, ufOrigem) {
     const cfMensal = calcularCustoFixoMensalVeiculoNTC(veiculo, ufOrigem);
     const cvPorKm = calcularCustoVariavelPorKmNTC(veiculo, tipoCarga, ufOrigem);
     const capacidadeTon = veiculo.capacidadeToneladas;
     
     const fatorA = (cfMensal * GLOBAL_TEMPO_CARGA_DESCARGA_HORAS) / (capacidadeTon * GLOBAL_HORAS_TRABALHADAS_MES);
-
     const fatorB = ((cfMensal / (GLOBAL_HORAS_TRABALHADAS_MES * GLOBAL_VELOCIDADE_MEDIA_KMH)) + cvPorKm) / capacidadeTon;
-
     const diPorTonelada = (GLOBAL_DESPESAS_INDIRETAS_MENSAIS / GLOBAL_TONELAGEM_EXPEDIDA_MENSAL) * GLOBAL_COEFICIENTE_TERMINAIS;
 
-    const fretePesoNTC_por_tonelada = (fatorA + (fatorB * distanciaKm) + diPorTonelada) * (1 + (GLOBAL_LUCRO_OPERACIONAL_PERCENTUAL / 100));
-
-    return fretePesoNTC_por_tonelada;
+    const custoFretePeso = fatorA + (fatorB * distanciaKm) + diPorTonelada;
+    return custoFretePeso;
 }
-
 
 // =================================================================
 // 5. FUNÇÃO PRINCIPAL (ORQUESTRADOR)
 // =================================================================
 async function calculateAndDisplayRoute() {
-    // Declaração de todos os elementos da UI no início da função
     const avisoMultiViagemElem = document.getElementById('aviso-multi-viagem');
     const distanciaVeiculoElem = document.getElementById('distancia-veiculo');
     const custoAnttValorElem = document.getElementById('custo-antt-valor');
@@ -293,7 +255,6 @@ async function calculateAndDisplayRoute() {
     const loadingMessageElem = document.getElementById('loading-message');
     const errorDisplayMessageElem = document.getElementById('error-display-message');
 
-    // Limpeza inicial da UI
     loadingMessageElem.style.display = 'none';
     avisoMultiViagemElem.style.display = 'none';
     distanciaVeiculoElem.style.display = 'none';
@@ -303,14 +264,13 @@ async function calculateAndDisplayRoute() {
     errorDisplayMessageElem.style.display = 'none';
     errorDisplayMessageElem.textContent = '';
 
-    // Obter valores dos inputs
     const origemInput = document.getElementById('origem').value;
     const destinoInput = document.getElementById('destino').value;
     const tipoOperacao = document.getElementById('tipo-operacao').value;
     const tipoCarga = document.getElementById('tipo-carga').value;
     const veiculoId = document.getElementById('veiculo').value;
     const pesoCargaInput = document.getElementById('peso-carga').value;
-    
+
     try {
         if (!origemInput || !destinoInput || !pesoCargaInput) {
             throw new Error('Por favor, preencha todos os campos.');
@@ -323,7 +283,7 @@ async function calculateAndDisplayRoute() {
         if (!veiculoSelecionado) {
             throw new Error('Dados do veículo não carregados ou veículo selecionado inválido.');
         }
-        
+
         loadingMessageElem.style.display = 'block';
 
         let numeroDeViagens = 1;
@@ -332,13 +292,13 @@ async function calculateAndDisplayRoute() {
             avisoMultiViagemElem.innerHTML = `<strong>Atenção:</strong> A carga de ${pesoCarga}t excede a capacidade do veículo (${veiculoSelecionado.capacidadeToneladas}t).<br>Serão necessárias <strong>${numeroDeViagens} viagens</strong>.`;
             avisoMultiViagemElem.style.display = 'block';
         }
-    
+
         const processInput = async (input) => { const cep = getValidCep(input); return cep ? await fetchAddressFromCep(cep) : input; };
         const origemAddressText = await processInput(origemInput);
         const origemInfo = await geocodeAddress(origemAddressText);
         const destinoAddressText = await processInput(destinoInput);
         const destinoInfo = await geocodeAddress(destinoAddressText);
-        
+
         const profile = 'driving';
         const coordsString = `${origemInfo.lon},${origemInfo.lat};${destinoInfo.lon},${destinoInfo.lat}`;
         const osrmUrl = `https://router.project-osrm.org/route/v1/${profile}/${coordsString}?overview=full&geometries=geojson`;
@@ -351,21 +311,27 @@ async function calculateAndDisplayRoute() {
 
         const ufOrigem = estadoParaUFData[origemInfo.estado];
         if (!ufOrigem) { throw new Error(`Não foi possível determinar a UF para o estado de origem: ${origemInfo.estado || 'desconhecido'}.`); }
-        
-        // --- CÁLCULO 1: Custo Mínimo (ANTT) ---
+
+        // --- CÁLCULO DOS CUSTOS ---
+
+        // 1. Custo ANTT
         const custoPorViagemANTT = calcularCustoFreteANTTOfficial(distanciaKm, veiculoSelecionado, tipoCarga, tipoOperacao);
         const custoTotalOperacaoANTT = custoPorViagemANTT.custoTotal * numeroDeViagens;
 
-        // --- CÁLCULO 2: Seu Custo Operacional Total (NTC) ---
-        const fretePesoPorToneladaNTC = calcularSeuCustoOperacionalTotalNTC(distanciaKm, veiculoSelecionado, tipoCarga, ufOrigem);
-        const custoDeUmaViagemNTC = fretePesoPorToneladaNTC * veiculoSelecionado.capacidadeToneladas;
+        // 2. Custo NTC (Frete-Peso + Lucro)
+        const fretePesoPorToneladaNTC = calcularFretePesoNTC(distanciaKm, veiculoSelecionado, tipoCarga, ufOrigem);
+        const custoFretePesoTotalViagem = fretePesoPorToneladaNTC * veiculoSelecionado.capacidadeToneladas;
+        
+        const lucroNTC = custoFretePesoTotalViagem * (GLOBAL_LUCRO_OPERACIONAL_PERCENTUAL / 100);
+        const custoDeUmaViagemNTC = custoFretePesoTotalViagem + lucroNTC;
+        
         const seuCustoOperacionalTotalNTC = custoDeUmaViagemNTC * numeroDeViagens;
 
-        // --- Cálculos de Duração ---
+        // 3. Duração
         const duracaoRealistaPorViagem = calcularDuracaoRealista(tempoConducaoOriginalSegundos);
         const duracaoTotalOperacaoSegundos = duracaoRealistaPorViagem.duracaoTotalSegundos * numeroDeViagens;
 
-        // --- Exibição dos Resultados ---
+        // --- EXIBIÇÃO DOS RESULTADOS ---
         routeLayer.clearLayers();
         loadingMessageElem.style.display = 'none';
 
@@ -375,17 +341,18 @@ async function calculateAndDisplayRoute() {
         custoAnttValorElem.textContent = `Custo Mínimo (ANTT): R$ ${custoTotalOperacaoANTT.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         custoAnttDetalheElem.innerHTML = `Baseado em ${numeroDeViagens} viagem(ns) de R$ ${custoPorViagemANTT.custoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} cada (Tabela: ${custoPorViagemANTT.tituloTabela}).`;
         custoAnttValorElem.parentElement.style.display = 'block';
-        
+
         custoNtcValorElem.textContent = `Seu Custo Operacional (NTC): R$ ${seuCustoOperacionalTotalNTC.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        custoNtcDetalheElem.innerHTML = `Baseado em ${numeroDeViagens} viagem(ns) de R$ ${custoDeUmaViagemNTC.toLocaleString('pt-BR', {minimumFractionDigits: 2})} cada.<br>Calculado com base no Manual de Custos da NTC&Logística.`;
+        custoNtcDetalheElem.innerHTML = `Baseado em ${numeroDeViagens} viagem(ns) de R$ ${custoDeUmaViagemNTC.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} cada.<br><small>(Componentes: Frete-Peso + Lucro)</small>`;
         custoNtcValorElem.parentElement.style.display = 'block';
-        
+
         duracaoTotalValorElem.textContent = `Duração Total da Operação: ${formatarDuracao(duracaoTotalOperacaoSegundos)}`;
         duracaoTotalDetalheElem.innerHTML = `Considerando ${numeroDeViagens} viagem(ns) de ${formatarDuracao(duracaoRealistaPorViagem.duracaoTotalSegundos)} cada.<br><small><em>(Cada viagem inclui aprox. ${duracaoRealistaPorViagem.paradas11h} pernoite(s) e ${duracaoRealistaPorViagem.paradas30min} parada(s) de 30min)</em></small>`;
         duracaoTotalValorElem.parentElement.style.display = 'block';
-        
+
         const routeGeometry = routeData.routes[0].geometry;
-        const routeLine = L.geoJSON(routeGeometry, { style: { color: '#0056b3', weight: 6 } }).addTo(routeLayer);
+        const routeLine = L.geoJSON(routeGeometry, { style: { color: '#0056b3', weight: 6 } });
+        routeLayer.addLayer(routeLine);
         L.marker([origemInfo.lat, origemInfo.lon]).addTo(routeLayer).bindPopup(`<b>Saída:</b><br>${origemAddressText}`);
         L.marker([destinoInfo.lat, destinoInfo.lon]).addTo(routeLayer).bindPopup(`<b>Chegada:</b><br>${destinoInfo.address || destinoAddressText}`);
         map.fitBounds(routeLine.getBounds());

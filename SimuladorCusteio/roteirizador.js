@@ -44,20 +44,13 @@ function adicionarCampoParada() {
 // 3. FUNÇÕES DE API (Geocodificação e Rotas)
 // =================================================================
 
-// Encontre a função processarEndereco e substitua por esta
-
-// Verifique se a sua função em roteirizador.js está igual a esta
-
 async function processarEndereco(enderecoInput) {
-    // 1. Tenta processar como CEP primeiro (mais confiável)
-    const cepLimpo = enderecoInput.replace(/\D/g, ''); // Limpa o input, removendo hífens, etc.
+    const cepLimpo = enderecoInput.replace(/\D/g, '');
     if (/^\d{8}$/.test(cepLimpo)) {
         try {
-            // 2. Se for CEP, usa a BrasilAPI que retorna endereço E coordenadas
             const response = await fetch(`https://brasilapi.com.br/api/cep/v2/${cepLimpo}`);
             if (response.ok) {
                 const data = await response.json();
-                // VERIFICAÇÃO DEFENSIVA
                 if (data.location?.coordinates?.latitude && data.location?.coordinates?.longitude) {
                     return {
                         endereco: `${data.street}, ${data.city}`,
@@ -73,13 +66,11 @@ async function processarEndereco(enderecoInput) {
         }
     }
 
-    // 3. Se não for um CEP ou se a primeira tentativa falhar, usa o Nominatim
     try {
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoInput)}`;
         const response = await fetch(url);
         const data = await response.json();
         if (data && data.length > 0) {
-            // VERIFICAÇÃO DEFENSIVA
             const lat = data[0].lat;
             const lon = data[0].lon;
             if (lat && lon) {
@@ -93,7 +84,6 @@ async function processarEndereco(enderecoInput) {
         console.error(`Falha ao geocodificar "${enderecoInput}" com Nominatim`, error);
     }
     
-    // 4. Se NENHUM método funcionar ou retornar coordenadas válidas, retorna nulo
     console.warn(`Não foi possível obter coordenadas válidas para: "${enderecoInput}". Ponto descartado.`);
     return null;
 }
@@ -107,14 +97,14 @@ async function fetchOptimalRoute(coordsArray, roundtrip) {
         const response = await fetch(osrmUrl);
         const data = await response.json();
         if (data.code !== 'Ok') { throw new Error(data.message || 'Não foi possível otimizar a rota.'); }
-        return data; 
+        return data;
     } catch (error) {
         throw error;
     }
 }
 
 // =================================================================
-// 4. FUNÇÃO PRINCIPAL DO ROTEIRIZADOR (LÓGICA FINAL)
+// 4. FUNÇÃO PRINCIPAL DO ROTEIRIZADOR
 // =================================================================
 
 async function criarRotaNoMapa() {
@@ -155,7 +145,6 @@ async function criarRotaNoMapa() {
             throw new Error("A API não retornou uma rota otimizada válida.");
         }
 
-        // Usa os nomes retornados pela API para garantir consistência
         const ordemFormatada = waypointsOtimizados.map(wp => wp.name || "Ponto desconhecido").join(' &rarr; ');
 
         const distanciaKm = (rota.distance / 1000).toFixed(2);
@@ -177,12 +166,11 @@ async function criarRotaNoMapa() {
         const routeLine = L.geoJSON(rota.geometry, { style: { color: '#0056b3', weight: 6 } });
         routeLayer.addLayer(routeLine);
         
-        // --- LÓGICA DE MARCADORES 100% BASEADA NA RESPOSTA DA API ---
         waypointsOtimizados.forEach((waypoint, index) => {
             const numeroDoPonto = index + 1;
             const popupTexto = `<b>Ponto ${numeroDoPonto}:</b><br>${waypoint.name || 'Localização aproximada'}`;
 
-            L.marker([waypoint.location[1], waypoint.location[0]]) // [lat, lon]
+            L.marker([waypoint.location[1], waypoint.location[0]])
                 .addTo(routeLayer)
                 .bindPopup(popupTexto)
                 .bindTooltip(String(numeroDoPonto), {
