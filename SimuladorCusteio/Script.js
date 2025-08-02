@@ -144,38 +144,39 @@ function calcularCustoFreteANTTOfficial(distanciaKm, veiculo, tipoCarga, tipoOpe
 }
 
 function calcularCustoFixoMensalVeiculoNTC(veiculo, ufOrigem) {
-    const valorTotalConjunto = veiculo.valor + (veiculo.equipamento?.valor || 0);
+    // RC = Valor do veículo completo x (taxa remuneração anual / 12)
+    // O capital empatado considera o valor do conjunto (veículo + implemento)
+    const valorTotalConjunto = veiculo.valor + veiculo.valorImplemento;
     const RC = valorTotalConjunto * (GLOBAL_TAXA_REMUNERACAO_CAPITAL_ANUAL / 12);
 
+    // SM = (1 + % Encargos Sociais) x salário do motorista x nº motoristas
     const salarioBase = salariosData[ufOrigem] || veiculo.salarioMotoristaMensal;
-    const SM = (1 + veiculo.encargosSociaisMotorista) * salarioBase;
+    const SM = (1 + veiculo.encargosSociaisMotorista) * salarioBase * 1;
 
-    const SO = (veiculo.valor * 0.003);
+    // SO (Salários de oficina) - Simplificado
+    const SO = (valorTotalConjunto * 0.003); 
 
+    // RV = (% de perda x valor do VEÍCULO zero km sem pneus) / Vida Útil em meses [cite: 81]
     const RV = (GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO * veiculo.valorSemPneus) / (veiculo.vidaUtilAnos * 12);
-    
-    const RE = (GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO * (veiculo.equipamento?.valorSemPneus || 0)) / ((veiculo.equipamento?.vidaUtilAnos || 1) * 12);
 
-    const ipvaAnual = veiculo.valor * 0.015;
+    // RE = (% de perda x valor do EQUIPAMENTO novo sem pneus) / Vida Útil em meses [cite: 85]
+    let RE = 0;
+    if (veiculo.valorImplemento > 0 && veiculo.vidaUtilImplementoAnos > 0) {
+        RE = (GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO * veiculo.valorImplementoSemPneus) / (veiculo.vidaUtilImplementoAnos * 12);
+    }
+
+    // TI = (IPVA + DPVAT + Licenciamento) / 12 [cite: 87]
+    const ipvaAnual = valorTotalConjunto * 0.015; // [cite: 94]
     const licenciamentoAnual = custosFixosAnuaisData.licenciamento_anual[ufOrigem] || 150;
-    const dpvatAnual = custosFixosAnuaisData.dpvat_anual || 105.65;
-    const tacografoAnual = (custosFixosAnuaisData.taxa_vistoria_tacografo_bienal || 207.34) / 2;
-    const TI = (ipvaAnual + licenciamentoAnual + dpvatAnual + tacografoAnual) / 12;
+    const TI = (ipvaAnual + licenciamentoAnual) / 12; 
+
+    // SV, SE, RCF - Simplificado como um % do valor do conjunto
+    const SV_SE_RCF = (valorTotalConjunto * 0.04) / 12;
+
+    // Soma de todos os custos fixos mensais [cite: 105]
+    const custoFixoMensalTotal = RC + SM + SO + RV + RE + TI + SV_SE_RCF;
     
-    const IOF = 1.07;
-    const seguroParams = veiculo.seguros || {};
-
-    const v1 = (veiculo.valor * (seguroParams.veiculo_premio_ref_percentual || 0.02));
-    const v2 = (veiculo.valor * (seguroParams.veiculo_importancia_segurada_percentual || 0.015));
-    const SV = ((v1 + v2 + (seguroParams.custo_apolice || 100)) * IOF) / 12;
-
-    const v3 = ((veiculo.equipamento?.valor || 0) * (seguroParams.equipamento_premio_ref_percentual || 0));
-    const v4 = ((veiculo.equipamento?.valor || 0) * (seguroParams.equipamento_importancia_segurada_percentual || 0));
-    const SE = ((v3 + v4 + (seguroParams.custo_apolice || 100)) * IOF) / 12;
-    
-    const RCF = (((seguroParams.rcf_danos_materiais_anual || 800) + (seguroParams.rcf_danos_pessoais_anual || 400) + (seguroParams.custo_apolice || 100)) * IOF) / 12;
-
-    return RC + SM + SO + RV + RE + TI + SV + SE + RCF;
+    return custoFixoMensalTotal;
 }
 
 function calcularCustoVariavelPorKmNTC(veiculo, tipoCarga, ufOrigem) {

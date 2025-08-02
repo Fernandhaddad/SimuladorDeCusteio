@@ -1,146 +1,92 @@
 {
     "toco": {
         "nome": "Toco",
+        "pesoMaximo": 16,
         "eixos": 2,
         "valor": 350000,
         "vidaUtilAnos": 10,
-        "capacidadeToneladas": 8,      
-        "salarioMotoristaMensal": 3000,       
-        "encargosSociaisMotorista": 0.80,    
         "valorSemPneus": 332500,
-        "equipamento": {
-            "valor": 0,
-            "valorSemPneus": 0,
-            "vidaUtilAnos": 0
-        },
-        "seguros": {
-            "veiculo_premio_ref_percentual": 0.02,
-            "veiculo_importancia_segurada_percentual": 0.015,
-            "equipamento_premio_ref_percentual": 0,
-            "equipamento_importancia_segurada_percentual": 0,
-            "rcf_danos_materiais_anual": 800,
-            "rcf_danos_pessoais_anual": 400,
-            "custo_apolice": 100
-        },
-        "custosVariaveis": {
-            "preco_lubrificante_motor_litro": 35.00,
-            "preco_lubrificante_transmissao_litro": 45.00,
-            "volume_carter_litros": 30,
-            "volume_transmissao_litros": 15,
-            "km_troca_oleo_motor": 15000,
-            "km_troca_oleo_transmissao": 70000,
-            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
-            "preco_lavagem_completa": 120.00,
-            "km_entre_lavagens": 4000,
-            "percentual_perda_pneus": 0.07
-        }
+        "valorImplemento": 0,
+        "vidaUtilImplementoAnos": 0,
+        "valorImplementoSemPneus": 0,
+        "capacidadeToneladas": 8,
+        "salarioMotoristaMensal": 3000,
+        "encargosSociaisMotorista": 0.8,
+        "custoPneuPorKm": 0.3,
+        "custoLubrificantesPorKm": 0.05,
+        "custoLavagemGraxasPorKm": 0.03,
+        "seguroMensalEstimado": 250
     },
     "trucado": {
         "nome": "Caminhão Truck",
+        "pesoMaximo": 23,
         "eixos": 3,
         "valor": 450000,
         "vidaUtilAnos": 10,
-        "capacidadeToneladas": 14,          
-        "salarioMotoristaMensal": 3200,      
-        "encargosSociaisMotorista": 0.80,   
-        "valorSemPneus": 425000,
-        "equipamento": {
-            "valor": 0,
-            "valorSemPneus": 0,
-            "vidaUtilAnos": 0
-        },
-         "seguros": {
-            "veiculo_premio_ref_percentual": 0.02,
-            "veiculo_importancia_segurada_percentual": 0.015,
-            "equipamento_premio_ref_percentual": 0,
-            "equipamento_importancia_segurada_percentual": 0,
-            "rcf_danos_materiais_anual": 900,
-            "rcf_danos_pessoais_anual": 450,
-            "custo_apolice": 100
-        },
-        "custosVariaveis": {
-            "preco_lubrificante_motor_litro": 35.00,
-            "preco_lubrificante_transmissao_litro": 45.00,
-            "volume_carter_litros": 40,
-            "volume_transmissao_litros": 20,
-            "km_troca_oleo_motor": 20000,
-            "km_troca_oleo_transmissao": 80000,
-            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
-            "preco_lavagem_completa": 150.00,
-            "km_entre_lavagens": 5000,
-            "percentual_perda_pneus": 0.07
-        }
+        "valorSemPneus": 427500,
+        "valorImplemento": 0,
+        "vidaUtilImplementoAnos": 0,
+        "valorImplementoSemPneus": 0,
+        "capacidadeToneladas": 14,
+        "salarioMotoristaMensal": 3200,
+        "encargosSociaisMotorista": 0.8,
+        "custoPneuPorKm": 0.4,
+        "custoLubrificantesPorKm": 0.06,
+        "custoLavagemGraxasPorKm": 0.04,
+        "seguroMensalEstimado": 300
     },
     "cavalo_toco_ls": {
         "nome": "Cavalo Mecânico + Semirreboque",
+        "pesoMaximo": 41.5,
         "eixos": 5,
-        "valor": 750000,
-        "vidaUtilAnos": 12,
-        "capacidadeToneladas": 27,          
-        "salarioMotoristaMensal": 3800,      
-        "encargosSociaisMotorista": 0.85,    
-        "valorSemPneus": 610000,
-        "equipamento": {
-            "valor": 120000,
-            "valorSemPneus": 100000,
-            "vidaUtilAnos": 15
-        },
-        "seguros": {
-            "veiculo_premio_ref_percentual": 0.025,
-            "veiculo_importancia_segurada_percentual": 0.02,
-            "equipamento_premio_ref_percentual": 0.01,
-            "equipamento_importancia_segurada_percentual": 0.01,
-            "rcf_danos_materiais_anual": 1200,
-            "rcf_danos_pessoais_anual": 600,
-            "custo_apolice": 150
-        },
-        "custosVariaveis": {
-            "preco_lubrificante_motor_litro": 35.00,
-            "preco_lubrificante_transmissao_litro": 45.00,
-            "volume_carter_litros": 40,
-            "volume_transmissao_litros": 20,
-            "km_troca_oleo_motor": 20000,
-            "km_troca_oleo_transmissao": 80000,
-            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
-            "preco_lavagem_completa": 180.00,
-            "km_entre_lavagens": 5000,
-            "percentual_perda_pneus": 0.07
-        }
-    },
-    "cavalo_toco_4e": {
-        "nome": "Cavalo Mecânico Simples (4 eixos)",
-        "eixos": 4,
         "valor": 550000,
         "vidaUtilAnos": 12,
-        "capacidadeToneladas": 20,
-        "salarioMotoristaMensal": 3500,
+        "valorSemPneus": 522500,
+        "valorImplemento": 150000,
+        "vidaUtilImplementoAnos": 15,
+        "valorImplementoSemPneus": 135000,
+        "capacidadeToneladas": 27,
+        "salarioMotoristaMensal": 3800,
         "encargosSociaisMotorista": 0.85,
-        "valorSemPneus": 520000,
-        "equipamento": {
-            "valor": 90000,
-            "valorSemPneus": 75000,
-            "vidaUtilAnos": 15
-        },
-        "seguros": {
-            "veiculo_premio_ref_percentual": 0.02,
-            "veiculo_importancia_segurada_percentual": 0.015,
-            "equipamento_premio_ref_percentual": 0.01,
-            "equipamento_importancia_segurada_percentual": 0.01,
-            "rcf_danos_materiais_anual": 1000,
-            "rcf_danos_pessoais_anual": 500,
-            "custo_apolice": 120
-        },
-        "custosVariaveis": {
-            "preco_lubrificante_motor_litro": 35.00,
-            "preco_lubrificante_transmissao_litro": 45.00,
-            "volume_carter_litros": 40,
-            "volume_transmissao_litros": 20,
-            "km_troca_oleo_motor": 20000,
-            "km_troca_oleo_transmissao": 80000,
-            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
-            "preco_lavagem_completa": 160.00,
-            "km_entre_lavagens": 5000,
-            "percentual_perda_pneus": 0.07
-        }
+        "custoPneuPorKm": 0.6,
+        "custoLubrificantesPorKm": 0.08,
+        "custoLavagemGraxasPorKm": 0.06,
+        "seguroMensalEstimado": 500
+    },
+    "vanderleia": {
+        "nome": "Vanderleia / Cavalo Trucado + Semirreboque",
+        "pesoMaximo": 48.5,
+        "eixos": 6,
+        "valor": 650000,
+        "vidaUtilAnos": 12,
+        "valorSemPneus": 617500,
+        "valorImplemento": 200000,
+        "vidaUtilImplementoAnos": 15,
+        "valorImplementoSemPneus": 180000,
+        "capacidadeToneladas": 35,
+        "salarioMotoristaMensal": 4000,
+        "encargosSociaisMotorista": 0.9,
+        "custoPneuPorKm": 0.7,
+        "custoLubrificantesPorKm": 0.09,
+        "custoLavagemGraxasPorKm": 0.07,
+        "seguroMensalEstimado": 550
+    },
+    "rodotrem": {
+        "nome": "Rodotrem / Bi-trem",
+        "pesoMaximo": 74,
+        "eixos": 9,
+        "valor": 700000,
+        "vidaUtilAnos": 15,
+        "valorSemPneus": 665000,
+        "valorImplemento": 400000,
+        "vidaUtilImplementoAnos": 15,
+        "valorImplementoSemPneus": 360000,
+        "capacidadeToneladas": 50,
+        "salarioMotoristaMensal": 4500,
+        "encargosSociaisMotorista": 0.9,
+        "custoPneuPorKm": 1.0,
+        "custoLubrificantesPorKm": 0.12,
+        "custoLavagemGraxasPorKm": 0.1,
+        "seguroMensalEstimado": 700
     }
 }
