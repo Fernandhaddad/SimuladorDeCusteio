@@ -11,15 +11,15 @@ let custosPneusData = {};
 let custosFixosAnuaisData = {};
 
 // Constantes Globais para o CÁLCULO NTC (Seu Custo Operacional Total)
-const GLOBAL_HORAS_TRABALHADAS_MES = 220; // H: Horas trabalhadas por mês (NTC sugere 200 a 240) 
-const GLOBAL_VELOCIDADE_MEDIA_KMH = 60;   // V: Velocidade média de transporte em km/h [cite: 153]
-const GLOBAL_COEFICIENTE_TERMINAIS = 1.0; // C: Coeficiente de uso de terminais (valor médio = 1) [cite: 155]
-const GLOBAL_LUCRO_OPERACIONAL_PERCENTUAL = 15; // L: Lucro operacional em percentual (ex: 15 para 15% de lucro) 
-const GLOBAL_TEMPO_CARGA_DESCARGA_HORAS = 3; // Tcd: Tempo de carga e descarga em horas (para lotação) [cite: 150, 359]
-const GLOBAL_DESPESAS_INDIRETAS_MENSAIS = 50000; // DAT: Despesas administrativas e de terminais mensais [cite: 126]
-const GLOBAL_TONELAGEM_EXPEDIDA_MENSAL = 1000; // T.EXP: Tonelagem expedida pela empresa no mês (para rateio do DI) [cite: 153]
+const GLOBAL_HORAS_TRABALHADAS_MES = 220; // H: Horas trabalhadas por mês (NTC sugere 200 a 240)
+const GLOBAL_VELOCIDADE_MEDIA_KMH = 60;   // V: Velocidade média de transporte em km/h
+const GLOBAL_COEFICIENTE_TERMINAIS = 1.0; // C: Coeficiente de uso de terminais (valor médio = 1)
+const GLOBAL_LUCRO_OPERACIONAL_PERCENTUAL = 15; // L: Lucro operacional em percentual (ex: 15 para 15% de lucro)
+const GLOBAL_TEMPO_CARGA_DESCARGA_HORAS = 3; // Tcd: Tempo de carga e descarga em horas (para lotação)
+const GLOBAL_DESPESAS_INDIRETAS_MENSAIS = 50000; // DAT: Despesas administrativas e de terminais mensais
+const GLOBAL_TONELAGEM_EXPEDIDA_MENSAL = 1000; // T.EXP: Tonelagem expedida pela empresa no mês (para rateio do DI)
 const GLOBAL_TAXA_REMUNERACAO_CAPITAL_ANUAL = 0.12; // 12% ao ano
-const GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO = 0.95; // 95% de perda, 5% de valor de revenda [cite: 85]
+const GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO = 0.95; // 95% de perda, 5% de valor de revenda
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -159,7 +159,7 @@ function calcularCustoFreteANTTOfficial(distanciaKm, veiculo, tipoCarga, tipoOpe
 
 
 // =================================================================
-// FUNÇÕES DE CÁLCULO NTC (SEU CUSTO OPERACIONAL) - NOVAS E CORRIGIDAS
+// FUNÇÕES DE CÁLCULO NTC (SEU CUSTO OPERACIONAL) - VERSÃO FINAL
 // Baseadas estritamente no "Manual de Cálculo de Custos e Formação de Preços"
 // =================================================================
 
@@ -169,25 +169,25 @@ function calcularCustoFreteANTTOfficial(distanciaKm, veiculo, tipoCarga, tipoOpe
  */
 function calcularCustoFixoMensalVeiculoNTC(veiculo, ufOrigem) {
     // RC = Valor do veículo completo x (taxa remuneração anual / 12)
-    const RC = veiculo.valor * (GLOBAL_TAXA_REMUNERACAO_CAPITAL_ANUAL / 12); // 
+    const RC = veiculo.valor * (GLOBAL_TAXA_REMUNERACAO_CAPITAL_ANUAL / 12);
 
     // SM = (1 + % Encargos Sociais) x salário do motorista x nº motoristas
-    const salarioBase = salariosData[ufOrigem] || veiculo.salarioMotoristaMensal; // Usa salário do estado ou fallback
-    const SM = (1 + veiculo.encargosSociaisMotorista) * salarioBase * 1; // 
+    const salarioBase = salariosData[ufOrigem] || veiculo.salarioMotoristaMensal;
+    const SM = (1 + veiculo.encargosSociaisMotorista) * salarioBase * 1;
 
-    // SO (Salários de oficina) - Simplificado como um % do valor do veículo, conforme práticas de mercado
-    const SO = (veiculo.valor * 0.003); // Estimativa: 0.3% do valor do veículo para manutenção mensal
+    // SO (Salários de oficina) - CORRIGIDO: Utilizando o dado específico do veículo.
+    const SO = veiculo.custoManutencaoMensal;
 
     // RV = (% de perda x valor do veículo zero km sem pneus) / Vida Útil em meses
-    const RV = (GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO * veiculo.valorSemPneus) / (veiculo.vidaUtilAnos * 12); // 
+    const RV = (GLOBAL_PERCENTUAL_PERDA_DEPRECIACAO * veiculo.valorSemPneus) / (veiculo.vidaUtilAnos * 12);
 
     // TI = (IPVA + DPVAT + Licenciamento) / 12
-    const ipvaAnual = veiculo.valor * 0.015; // Média de 1.5% para caminhões [cite: 94]
+    const ipvaAnual = veiculo.valor * 0.015;
     const licenciamentoAnual = custosFixosAnuaisData.licenciamento_anual[ufOrigem] || 150;
-    const TI = (ipvaAnual + licenciamentoAnual) / 12; // [cite: 87]
+    const TI = (ipvaAnual + licenciamentoAnual) / 12;
 
-    // SV, SE, RCF - Simplificado como um % do valor do veículo
-    const SV_SE_RCF = (veiculo.valor * 0.04) / 12; // Estimativa: 4% do valor do veículo ao ano para seguros 
+    // SV, SE, RCF - MELHORADO: Utilizando a estimativa mensal do JSON.
+    const SV_SE_RCF = veiculo.seguroMensalEstimado;
 
     const custoFixoMensalTotal = RC + SM + SO + RV + TI + SV_SE_RCF;
     
@@ -202,7 +202,7 @@ function calcularCustoVariavelPorKmNTC(veiculo, tipoCarga, ufOrigem) {
     const quilometragemMensal = GLOBAL_HORAS_TRABALHADAS_MES * GLOBAL_VELOCIDADE_MEDIA_KMH;
     
     // PM = (Valor do veículo sem pneus * 1%) / KM Média Mensal
-    const PM = (veiculo.valorSemPneus * 0.01) / quilometragemMensal; // 
+    const PM = (veiculo.valorSemPneus * 0.01) / quilometragemMensal;
 
     // DC (Combustível)
     const { precos, consumo_arla_percentual_sobre_diesel, consumo_diesel_kml } = custosVariaveisData; 
@@ -216,17 +216,17 @@ function calcularCustoVariavelPorKmNTC(veiculo, tipoCarga, ufOrigem) {
         rendimentoKmL = consumo_diesel_kml.frigorificada[numEixos];
     }
     
-    const DC = precoDieselDoEstado / rendimentoKmL; // [cite: 111]
+    const DC = precoDieselDoEstado / rendimentoKmL;
 
     // AD (Aditivo ARLA32)
     const litrosDieselPorKm = 1 / rendimentoKmL;
     const litrosArlaPorKm = litrosDieselPorKm * consumo_arla_percentual_sobre_diesel;
-    const AD = litrosArlaPorKm * precos.arla32_litro; // [cite: 112]
+    const AD = litrosArlaPorKm * precos.arla32_litro;
 
-    // LB (Lubrificantes) - Fórmula completa NTC não implementada por complexidade, usando proxy
+    // LB (Lubrificantes) - Usando proxy do JSON para simplificar
     const LB = veiculo.custoLubrificantesPorKm; 
 
-    // LG (Lavagem e graxas) - Fórmula completa NTC não implementada, usando proxy
+    // LG (Lavagem e graxas) - Usando proxy do JSON para simplificar
     const LG = veiculo.custoLavagemGraxasPorKm;
 
     // PR (Pneus e recauchutagem) - Fórmula NTC: {[(1 + %perda) x PneuNovo] + (Recap x N_Recap)} x N_Pneus / VidaUtilTotal
@@ -241,9 +241,9 @@ function calcularCustoVariavelPorKmNTC(veiculo, tipoCarga, ufOrigem) {
     const numPneusTraseiros = (numEixos - 1) * numero_pneus.traseiros_por_eixo;
     const custoTraseiroPorKm = (custoTotalPneuTraseiro / vidaUtilTraseiroTotal) * numPneusTraseiros;
 
-    const PR = (custoDirecionalPorKm + custoTraseiroPorKm); // 
+    const PR = (custoDirecionalPorKm + custoTraseiroPorKm);
 
-    const custoVariavelPorKmTotal = PM + DC + AD + LB + LG + PR; // [cite: 125]
+    const custoVariavelPorKmTotal = PM + DC + AD + LB + LG + PR;
 
     return custoVariavelPorKmTotal;
 }
@@ -266,16 +266,16 @@ function calcularSeuCustoOperacionalTotalNTC(distanciaKm, veiculo, tipoCarga, uf
     const capacidadeTon = veiculo.capacidadeToneladas;
     
     // Fator A = (CF * Tcd) / (CAP * H)
-    const fatorA = (cfMensal * GLOBAL_TEMPO_CARGA_DESCARGA_HORAS) / (capacidadeTon * GLOBAL_HORAS_TRABALHADAS_MES); // 
+    const fatorA = (cfMensal * GLOBAL_TEMPO_CARGA_DESCARGA_HORAS) / (capacidadeTon * GLOBAL_HORAS_TRABALHADAS_MES);
 
     // Fator B = [(CF / (H * V)) + CV] / CAP
-    const fatorB = ((cfMensal / (GLOBAL_HORAS_TRABALHADAS_MES * GLOBAL_VELOCIDADE_MEDIA_KMH)) + cvPorKm) / capacidadeTon; // 
+    const fatorB = ((cfMensal / (GLOBAL_HORAS_TRABALHADAS_MES * GLOBAL_VELOCIDADE_MEDIA_KMH)) + cvPorKm) / capacidadeTon;
 
     // DI = (DAT_mensal / T.EXP) * C
-    const diPorTonelada = (GLOBAL_DESPESAS_INDIRETAS_MENSAIS / GLOBAL_TONELAGEM_EXPEDIDA_MENSAL) * GLOBAL_COEFICIENTE_TERMINAIS; // 
+    const diPorTonelada = (GLOBAL_DESPESAS_INDIRETAS_MENSAIS / GLOBAL_TONELAGEM_EXPEDIDA_MENSAL) * GLOBAL_COEFICIENTE_TERMINAIS;
 
     // Cálculo do Frete-peso por tonelada (Fórmula NTC)
-    const fretePesoNTC_por_tonelada = (fatorA + (fatorB * distanciaKm) + diPorTonelada) * (1 + (GLOBAL_LUCRO_OPERACIONAL_PERCENTUAL / 100)); // 
+    const fretePesoNTC_por_tonelada = (fatorA + (fatorB * distanciaKm) + diPorTonelada) * (1 + (GLOBAL_LUCRO_OPERACIONAL_PERCENTUAL / 100));
 
     return fretePesoNTC_por_tonelada;
 }
@@ -365,7 +365,7 @@ async function calculateAndDisplayRoute() {
         const custoPorViagemANTT = calcularCustoFreteANTTOfficial(distanciaKm, veiculoSelecionado, tipoCarga, tipoOperacao);
         const custoTotalOperacaoANTT = custoPorViagemANTT.custoTotal * numeroDeViagens;
 
-        // --- CÁLCULO 2: Seu Custo Operacional Total (NTC) - CORRIGIDO ---
+        // --- CÁLCULO 2: Seu Custo Operacional Total (NTC) ---
         const fretePesoPorToneladaNTC = calcularSeuCustoOperacionalTotalNTC(distanciaKm, veiculoSelecionado, tipoCarga, ufOrigem);
         const custoDeUmaViagemNTC = fretePesoPorToneladaNTC * veiculoSelecionado.capacidadeToneladas;
         const seuCustoOperacionalTotalNTC = custoDeUmaViagemNTC * numeroDeViagens;
