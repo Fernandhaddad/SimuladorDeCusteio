@@ -13,7 +13,19 @@
         "custoPneuPorKm": 0.30,             
         "custoLubrificantesPorKm": 0.05,     
         "custoLavagemGraxasPorKm": 0.03,    
-        "seguroMensalEstimado": 250         
+        "seguroMensalEstimado": 250,         
+        "custosVariaveis": {
+            "preco_lubrificante_motor_litro": 35.00,
+            "preco_lubrificante_transmissao_litro": 45.00,
+            "volume_carter_litros": 30,
+            "volume_transmissao_litros": 15,
+            "km_troca_oleo_motor": 15000,
+            "km_troca_oleo_transmissao": 70000,
+            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
+            "preco_lavagem_completa": 120.00,
+            "km_entre_lavagens": 4000,
+            "percentual_perda_pneus": 0.07
+        }
     },
     "trucado": {
         "nome": "Caminhão Truck",
@@ -29,7 +41,19 @@
         "custoPneuPorKm": 0.40,              
         "custoLubrificantesPorKm": 0.06,     
         "custoLavagemGraxasPorKm": 0.04,     
-        "seguroMensalEstimado": 300         
+        "seguroMensalEstimado": 300,
+        "custosVariaveis": {
+            "preco_lubrificante_motor_litro": 35.00,
+            "preco_lubrificante_transmissao_litro": 45.00,
+            "volume_carter_litros": 30,
+            "volume_transmissao_litros": 15,
+            "km_troca_oleo_motor": 15000,
+            "km_troca_oleo_transmissao": 70000,
+            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
+            "preco_lavagem_completa": 120.00,
+            "km_entre_lavagens": 4000,
+            "percentual_perda_pneus": 0.07
+        }
     },
     "cavalo_toco_4e": {
         "nome": "Cavalo Mecânico Simples",
@@ -45,7 +69,19 @@
         "custoPneuPorKm": 0.50,              
         "custoLubrificantesPorKm": 0.07,     
         "custoLavagemGraxasPorKm": 0.05,    
-        "seguroMensalEstimado": 400         
+        "seguroMensalEstimado": 400,
+        "custosVariaveis": {
+            "preco_lubrificante_motor_litro": 35.00,
+            "preco_lubrificante_transmissao_litro": 45.00,
+            "volume_carter_litros": 30,
+            "volume_transmissao_litros": 15,
+            "km_troca_oleo_motor": 15000,
+            "km_troca_oleo_transmissao": 70000,
+            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
+            "preco_lavagem_completa": 120.00,
+            "km_entre_lavagens": 4000,
+            "percentual_perda_pneus": 0.07
+        } 
     },
     "cavalo_toco_ls": {
         "nome": "Cavalo Mecânico Simples + Semirreboque",
@@ -61,7 +97,19 @@
         "custoPneuPorKm": 0.60,              
         "custoLubrificantesPorKm": 0.08,     
         "custoLavagemGraxasPorKm": 0.06,     
-        "seguroMensalEstimado": 500         
+        "seguroMensalEstimado": 500,
+        "custosVariaveis": {
+            "preco_lubrificante_motor_litro": 35.00,
+            "preco_lubrificante_transmissao_litro": 45.00,
+            "volume_carter_litros": 30,
+            "volume_transmissao_litros": 15,
+            "km_troca_oleo_motor": 15000,
+            "km_troca_oleo_transmissao": 70000,
+            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
+            "preco_lavagem_completa": 120.00,
+            "km_entre_lavagens": 4000,
+            "percentual_perda_pneus": 0.07
+        }         
     },
     "vanderleia": {
         "nome": "Vanderleia / Cavalo Trucado + Semirreboque",
@@ -77,7 +125,19 @@
         "custoPneuPorKm": 0.70,             
         "custoLubrificantesPorKm": 0.09,     
         "custoLavagemGraxasPorKm": 0.07,    
-        "seguroMensalEstimado": 550         
+        "seguroMensalEstimado": 550,
+        "custosVariaveis": {
+            "preco_lubrificante_motor_litro": 35.00,
+            "preco_lubrificante_transmissao_litro": 45.00,
+            "volume_carter_litros": 30,
+            "volume_transmissao_litros": 15,
+            "km_troca_oleo_motor": 15000,
+            "km_troca_oleo_transmissao": 70000,
+            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
+            "preco_lavagem_completa": 120.00,
+            "km_entre_lavagens": 4000,
+            "percentual_perda_pneus": 0.07
+        }         
     },
     "romeu_julieta": {
         "nome": "Romeu e Julieta",
@@ -93,7 +153,19 @@
         "custoPneuPorKm": 0.80,              
         "custoLubrificantesPorKm": 0.10,     
         "custoLavagemGraxasPorKm": 0.08,     
-        "seguroMensalEstimado": 600         
+        "seguroMensalEstimado": 600,
+        "custosVariaveis": {
+            "preco_lubrificante_motor_litro": 35.00,
+            "preco_lubrificante_transmissao_litro": 45.00,
+            "volume_carter_litros": 30,
+            "volume_transmissao_litros": 15,
+            "km_troca_oleo_motor": 15000,
+            "km_troca_oleo_transmissao": 70000,
+            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
+            "preco_lavagem_completa": 120.00,
+            "km_entre_lavagens": 4000,
+            "percentual_perda_pneus": 0.07
+        }
     },
     "rodotrem": {
         "nome": "Rodotrem / Bi-trem",
@@ -109,6 +181,18 @@
         "custoPneuPorKm": 1.00,             
         "custoLubrificantesPorKm": 0.12,     
         "custoLavagemGraxasPorKm": 0.10,     
-        "seguroMensalEstimado": 700         
+        "seguroMensalEstimado": 700,
+        "custosVariaveis": {
+            "preco_lubrificante_motor_litro": 35.00,
+            "preco_lubrificante_transmissao_litro": 45.00,
+            "volume_carter_litros": 30,
+            "volume_transmissao_litros": 15,
+            "km_troca_oleo_motor": 15000,
+            "km_troca_oleo_transmissao": 70000,
+            "taxa_reposicao_oleo_motor_l_por_1000km": 1.0,
+            "preco_lavagem_completa": 120.00,
+            "km_entre_lavagens": 4000,
+            "percentual_perda_pneus": 0.07
+        }         
     }
 }
