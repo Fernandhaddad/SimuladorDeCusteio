@@ -242,8 +242,24 @@ function calcularFretePesoNTC(distanciaKm, veiculo, tipoCarga, ufOrigem) {
 }
 
 // =================================================================
-// 5. FUNÇÃO PRINCIPAL (ORQUESTRADOR)
+// 5. FUNÇÃO PRINCIPAL (ORQUESTRADOR) - ATUALIZADA
 // =================================================================
+
+// Nova função auxiliar para buscar a alíquota do Frete-Valor conforme o manual 
+function getFreteValorAliquota(distanciaKm) {
+    if (distanciaKm <= 250) return 0.003;
+    if (distanciaKm <= 500) return 0.004;
+    if (distanciaKm <= 1000) return 0.006;
+    if (distanciaKm <= 1500) return 0.007;
+    if (distanciaKm <= 2000) return 0.008;
+    if (distanciaKm <= 2600) return 0.009;
+    if (distanciaKm <= 3000) return 0.010;
+    if (distanciaKm <= 3400) return 0.011;
+    // Acima de 3400 km
+    return 0.012;
+}
+
+
 async function calculateAndDisplayRoute() {
     const avisoMultiViagemElem = document.getElementById('aviso-multi-viagem');
     const distanciaVeiculoElem = document.getElementById('distancia-veiculo');
@@ -271,14 +287,19 @@ async function calculateAndDisplayRoute() {
     const tipoCarga = document.getElementById('tipo-carga').value;
     const veiculoId = document.getElementById('veiculo').value;
     const pesoCargaInput = document.getElementById('peso-carga').value;
+    const valorCargaInput = document.getElementById('valor-carga').value; // CAMPO NOVO
 
     try {
-        if (!origemInput || !destinoInput || !pesoCargaInput) {
-            throw new Error('Por favor, preencha todos os campos.');
+        if (!origemInput || !destinoInput || !pesoCargaInput || !valorCargaInput) { // VALIDAÇÃO DO CAMPO NOVO
+            throw new Error('Por favor, preencha todos os campos, incluindo o valor da carga.');
         }
         const pesoCarga = parseFloat(pesoCargaInput);
+        const valorCarga = parseFloat(valorCargaInput); // CAMPO NOVO
         if (isNaN(pesoCarga) || pesoCarga <= 0) {
             throw new Error('Por favor, insira um peso de carga válido.');
+        }
+        if (isNaN(valorCarga) || valorCarga <= 0) { // VALIDAÇÃO DO CAMPO NOVO
+            throw new Error('Por favor, insira um valor de carga válido.');
         }
         const veiculoSelecionado = veiculosData[veiculoId];
         if (!veiculoSelecionado) {
@@ -319,13 +340,19 @@ async function calculateAndDisplayRoute() {
         const custoPorViagemANTT = calcularCustoFreteANTTOfficial(distanciaKm, veiculoSelecionado, tipoCarga, tipoOperacao);
         const custoTotalOperacaoANTT = custoPorViagemANTT.custoTotal * numeroDeViagens;
 
-        // 2. Custo NTC (Frete-Peso + Lucro)
+        // 2. Custo NTC (Frete-Peso + Lucro + GRIS + Frete-Valor)
         const fretePesoPorToneladaNTC = calcularFretePesoNTC(distanciaKm, veiculoSelecionado, tipoCarga, ufOrigem);
         const custoFretePesoTotalViagem = fretePesoPorToneladaNTC * veiculoSelecionado.capacidadeToneladas;
-        
         const lucroNTC = custoFretePesoTotalViagem * (GLOBAL_LUCRO_OPERACIONAL_PERCENTUAL / 100);
-        const custoDeUmaViagemNTC = custoFretePesoTotalViagem + lucroNTC;
-        
+
+        // CÁLCULO DO GRIS E FRETE-VALOR
+        const valorCargaPorViagem = valorCarga / numeroDeViagens;
+        const custoGris = valorCargaPorViagem * 0.003; // 
+        const aliquotaFreteValor = getFreteValorAliquota(distanciaKm);
+        const custoFreteValor = valorCargaPorViagem * aliquotaFreteValor; // 
+
+        // SOMA TOTAL DO CUSTO NTC POR VIAGEM
+        const custoDeUmaViagemNTC = custoFretePesoTotalViagem + lucroNTC + custoGris + custoFreteValor;
         const seuCustoOperacionalTotalNTC = custoDeUmaViagemNTC * numeroDeViagens;
 
         // 3. Duração
@@ -342,9 +369,20 @@ async function calculateAndDisplayRoute() {
         custoAnttValorElem.textContent = `Custo Mínimo (ANTT): R$ ${custoTotalOperacaoANTT.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         custoAnttDetalheElem.innerHTML = `Baseado em ${numeroDeViagens} viagem(ns) de R$ ${custoPorViagemANTT.custoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} cada (Tabela: ${custoPorViagemANTT.tituloTabela}).`;
         custoAnttValorElem.parentElement.style.display = 'block';
-
-        custoNtcValorElem.textContent = `Seu Custo Operacional (NTC): R$ ${seuCustoOperacionalTotalNTC.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        custoNtcDetalheElem.innerHTML = `Baseado em ${numeroDeViagens} viagem(ns) de R$ ${custoDeUmaViagemNTC.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} cada.<br><small>(Componentes: Frete-Peso + Lucro)</small>`;
+        
+        // Detalhamento do custo NTC atualizado
+        const detalheNTC = `
+            Baseado em ${numeroDeViagens} viagem(ns) de R$ ${custoDeUmaViagemNTC.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} cada.<br>
+            <small>
+                <b>Componentes por Viagem:</b><br>
+                &bull; Frete-Peso: R$ ${custoFretePesoTotalViagem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}<br>
+                &bull; GRIS (0.30%): R$ ${custoGris.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}<br>
+                &bull; Frete-Valor (${(aliquotaFreteValor * 100).toFixed(2)}%): R$ ${custoFreteValor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}<br>
+                &bull; Lucro (${GLOBAL_LUCRO_OPERACIONAL_PERCENTUAL}%): R$ ${lucroNTC.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </small>`;
+        
+        custoNtcValorElem.textContent = `Preço Final Sugerido (NTC): R$ ${seuCustoOperacionalTotalNTC.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        custoNtcDetalheElem.innerHTML = detalheNTC;
         custoNtcValorElem.parentElement.style.display = 'block';
 
         duracaoTotalValorElem.textContent = `Duração Total da Operação: ${formatarDuracao(duracaoTotalOperacaoSegundos)}`;
