@@ -35,6 +35,24 @@
         "custoLavagemGraxasPorKm": 0.04,
         "seguroMensalEstimado": 300
     },
+    "cavalo_toco_4e": {
+        "nome": "Cavalo Mecânico Simples",
+        "pesoMaximo": 33,
+        "eixos": 4,
+        "valor": 500000,
+        "vidaUtilAnos": 12,
+        "valorSemPneus": 475000,
+        "valorImplemento": 120000,
+        "vidaUtilImplementoAnos": 15,
+        "valorImplementoSemPneus": 108000,
+        "capacidadeToneladas": 20,
+        "salarioMotoristaMensal": 3600,
+        "encargosSociaisMotorista": 0.85,
+        "custoPneuPorKm": 0.5,
+        "custoLubrificantesPorKm": 0.07,
+        "custoLavagemGraxasPorKm": 0.05,
+        "seguroMensalEstimado": 450
+    },
     "cavalo_toco_ls": {
         "nome": "Cavalo Mecânico + Semirreboque",
         "pesoMaximo": 41.5,
@@ -70,6 +88,24 @@
         "custoLubrificantesPorKm": 0.09,
         "custoLavagemGraxasPorKm": 0.07,
         "seguroMensalEstimado": 550
+    },
+    "romeu_julieta": {
+        "nome": "Romeu e Julieta",
+        "pesoMaximo": 57,
+        "eixos": 7,
+        "valor": 680000,
+        "vidaUtilAnos": 14,
+        "valorSemPneus": 646000,
+        "valorImplemento": 300000,
+        "vidaUtilImplementoAnos": 15,
+        "valorImplementoSemPneus": 270000,
+        "capacidadeToneladas": 42,
+        "salarioMotoristaMensal": 4200,
+        "encargosSociaisMotorista": 0.9,
+        "custoPneuPorKm": 0.8,
+        "custoLubrificantesPorKm": 0.1,
+        "custoLavagemGraxasPorKm": 0.08,
+        "seguroMensalEstimado": 650
     },
     "rodotrem": {
         "nome": "Rodotrem / Bi-trem",
